@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NASDAQ-100 Companies</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f7f8fb;color:#111827}
+    header{padding:32px 24px;background:#0f172a;color:white}
+    h1{margin:0 0 8px;font-size:32px} p{margin:0;color:#cbd5e1}
+    main{padding:24px;max-width:1100px;margin:0 auto}
+    .bar{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+    input{padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;min-width:260px;font-size:14px}
+    .status{font-size:14px;color:#475569}
+    table{width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.12)}
+    th,td{padding:12px 14px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:14px}
+    th{background:#f1f5f9;color:#334155;font-weight:700;position:sticky;top:0}
+    tr:hover{background:#f8fafc}.symbol{font-weight:700;color:#0f172a}.muted{color:#64748b}.error{color:#b91c1c}
+    a{color:#2563eb;text-decoration:none}a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+<header>
+  <h1>NASDAQ-100 Companies</h1>
+  <p>Symbol, company name and official company website. Data is loaded from Wikipedia/Wikidata at page load.</p>
+</header>
+<main>
+  <div class="bar">
+    <input id="q" placeholder="Filter by symbol or company…" />
+    <span id="status" class="status">Loading constituents…</span>
+  </div>
+  <table>
+    <thead><tr><th>Symbol</th><th>Name</th><th>Company website</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody>
+  </table>
+</main>
+<script>
+const WIKI_API='https://en.wikipedia.org/w/api.php';
+const WD_API='https://www.wikidata.org/w/api.php';
+let companies=[];
+const $=id=>document.getElementById(id);
+function cleanTitle(s){return (s||'').replace(/\[.*?\]/g,'').trim();}
+async function getJson(url){const r=await fetch(url); if(!r.ok) throw new Error(r.status+' '+r.statusText); return r.json();}
+async function loadConstituents(){
+  const url=`${WIKI_API}?origin=*&action=parse&page=Nasdaq-100&prop=text&format=json`;
+  const data=await getJson(url);
+  const doc=new DOMParser().parseFromString(data.parse.text['*'],'text/html');
+  const tables=[...doc.querySelectorAll('table.wikitable')];
+  let best=[];
+  for (const table of tables){
+    const heads=[...table.querySelectorAll('th')].map(x=>x.textContent.trim().toLowerCase());
+    if(heads.some(h=>h.includes('ticker')) && heads.some(h=>h.includes('company'))){
+      best=[...table.querySelectorAll('tbody tr')].slice(1).map(tr=>{
+        const tds=[...tr.querySelectorAll('td')];
+        if(tds.length<2) return null;
+        const ticker=cleanTitle(tds[0].textContent);
+        const name=cleanTitle(tds[1].textContent);
+        const link=tds[1].querySelector('a[href^="/wiki/"]');
+        const page=link ? decodeURIComponent(link.getAttribute('href').replace('/wiki/','')) : name;
+        return ticker && name ? {ticker,name,page,website:null} : null;
+      }).filter(Boolean);
+      if(best.length>80) break;
+    }
+  }
+  return best;
+}
+async function loadWebsite(company){
+  try{
+    const titles=encodeURIComponent(company.page);
+    const e=await getJson(`${WIKI_API}?origin=*&action=query&prop=pageprops&titles=${titles}&format=json`);
+    const page=Object.values(e.query.pages)[0];
+    const qid=page?.pageprops?.wikibase_item;
+    if(!qid) return null;
+    const wd=await getJson(`${WD_API}?origin=*&action=wbgetentities&ids=${qid}&props=claims&format=json`);
+    const claim=wd.entities?.[qid]?.claims?.P856?.[0]?.mainsnak?.datavalue?.value;
+    return claim || null;
+  }catch{return null;}
+}
+function render(){
+  const q=$('q').value.trim().toLowerCase();
+  const filtered=companies.filter(c=>`${c.ticker} ${c.name}`.toLowerCase().includes(q));
+  $('rows').innerHTML=filtered.map(c=>`<tr><td class="symbol">${c.ticker}</td><td>${c.name}</td><td>${c.website?`<a href="${c.website}" target="_blank" rel="noopener">${c.website.replace(/^https?:\/\//,'').replace(/\/$/,'')}</a>`:'<span class="muted">Loading / unavailable</span>'}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No matches</td></tr>';
+  $('status').textContent=`${filtered.length} shown / ${companies.length} constituents`;
+}
+(async function init(){
+  try{
+    companies=await loadConstituents();
+    render();
+    let done=0;
+    for(const c of companies){ c.website=await loadWebsite(c); done++; if(done%5===0) render(); }
+    render();
+  }catch(e){ $('status').innerHTML=`<span class="error">Failed to load data: ${e.message}</span>`; $('rows').innerHTML='<tr><td colspan="3" class="error">Could not load NASDAQ-100 data.</td></tr>'; }
+})();
+$('q').addEventListener('input',render);
+</script>
+</body>
+</html>
