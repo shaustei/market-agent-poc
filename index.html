@@ -6,22 +6,23 @@
   <title>NASDAQ-100 Companies</title>
   <style>
     :root{
-      --bg:#f6f7f9;
-      --surface:#ffffff;
-      --surface-2:#f9fafb;
-      --ink:#111827;
-      --muted:#6b7280;
-      --subtle:#9ca3af;
-      --line:#e5e7eb;
-      --line-strong:#d1d5db;
-      --accent:#0f172a;
-      --accent-soft:#eef2ff;
-      --focus:#2563eb;
-      --success:#047857;
-      --danger:#b91c1c;
-      --shadow-sm:0 1px 2px rgba(15,23,42,.05);
-      --shadow-md:0 12px 30px rgba(15,23,42,.08);
-      --shadow-lg:0 28px 80px rgba(15,23,42,.12);
+      --bg:#07090d;
+      --bg-2:#0b1018;
+      --surface:#101722;
+      --surface-2:#141d2a;
+      --surface-3:#182334;
+      --ink:#f4f7fb;
+      --muted:#9aa8ba;
+      --subtle:#6f7e91;
+      --line:rgba(255,255,255,.10);
+      --line-strong:rgba(255,255,255,.18);
+      --lime:#b9ff66;
+      --cyan:#72f7ff;
+      --blue:#7aa2ff;
+      --amber:#ffd166;
+      --danger:#ff6b6b;
+      --shadow:0 28px 90px rgba(0,0,0,.42);
+      --shadow-soft:0 18px 50px rgba(0,0,0,.25);
     }
     *{box-sizing:border-box}
     html{background:var(--bg)}
@@ -29,167 +30,252 @@
       margin:0;
       min-height:100vh;
       color:var(--ink);
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
       background:
-        radial-gradient(circle at 12% 0%,rgba(37,99,235,.10),transparent 30%),
-        radial-gradient(circle at 88% 12%,rgba(15,23,42,.08),transparent 26%),
-        linear-gradient(180deg,#fff 0%,var(--bg) 42%,#eef1f5 100%);
-      letter-spacing:-.01em;
+        linear-gradient(115deg,rgba(185,255,102,.08),transparent 28%),
+        radial-gradient(circle at 76% 7%,rgba(114,247,255,.13),transparent 30%),
+        radial-gradient(circle at 10% 15%,rgba(122,162,255,.12),transparent 34%),
+        linear-gradient(180deg,var(--bg) 0%,var(--bg-2) 54%,#080b10 100%);
+      letter-spacing:-.015em;
     }
-    a{color:var(--accent);font-weight:650;text-decoration:none;text-underline-offset:4px}
-    a:hover{text-decoration:underline}
-    .shell{width:min(1180px,calc(100% - 40px));margin:0 auto}
-    header{padding:72px 0 34px}
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+      background-size:44px 44px;
+      mask-image:linear-gradient(to bottom,rgba(0,0,0,.85),transparent 78%);
+    }
+    body:after{
+      content:"NASDAQ 100 / EQUITY REFERENCE / LIVE PUBLIC DATA";
+      position:fixed;
+      right:-210px;
+      top:50%;
+      transform:rotate(90deg) translateX(50%);
+      transform-origin:center;
+      color:rgba(255,255,255,.08);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.42em;
+      pointer-events:none;
+      white-space:nowrap;
+    }
+    a{color:var(--cyan);font-weight:700;text-decoration:none;text-underline-offset:4px}
+    a:hover{text-decoration:underline;color:var(--lime)}
+    .shell{width:min(1180px,calc(100% - 40px));margin:0 auto;position:relative}
+    header{padding:34px 0 22px}
+    .navline{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:center;
+      margin-bottom:22px;
+      color:var(--subtle);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+    .brand{display:inline-flex;align-items:center;gap:10px;color:var(--ink)}
+    .brand:before{content:"";width:18px;height:18px;border:1px solid var(--line-strong);border-radius:6px;background:linear-gradient(135deg,var(--lime),var(--cyan));box-shadow:0 0 32px rgba(185,255,102,.25)}
+    .timestamp{color:var(--subtle);text-align:right}
     .hero{
       position:relative;
       overflow:hidden;
-      border:1px solid rgba(209,213,219,.9);
-      border-radius:32px;
-      background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(249,250,251,.88));
-      box-shadow:var(--shadow-lg);
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 300px;
+      gap:30px;
+      min-height:360px;
+      border:1px solid var(--line);
+      border-radius:34px;
+      background:
+        linear-gradient(135deg,rgba(20,29,42,.96),rgba(9,13,19,.96)),
+        linear-gradient(90deg,rgba(185,255,102,.22),transparent 34%);
+      box-shadow:var(--shadow);
       padding:42px;
       isolation:isolate;
     }
     .hero:before{
       content:"";
       position:absolute;
-      inset:-1px;
+      inset:0;
       background:
-        linear-gradient(90deg,rgba(37,99,235,.14),transparent 36%,rgba(15,23,42,.10)),
-        radial-gradient(circle at 80% 0%,rgba(37,99,235,.14),transparent 32%);
+        linear-gradient(120deg,transparent 0 48%,rgba(185,255,102,.12) 48% 49%,transparent 49% 100%),
+        radial-gradient(circle at 86% 22%,rgba(114,247,255,.22),transparent 24%);
+      z-index:-1;
+    }
+    .hero:after{
+      content:"";
+      position:absolute;
+      right:34px;
+      bottom:34px;
+      width:180px;
+      height:180px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:50%;
+      background:repeating-conic-gradient(from 0deg,rgba(185,255,102,.14) 0 8deg,transparent 8deg 18deg);
+      opacity:.8;
       z-index:-1;
     }
     .eyebrow{
       display:inline-flex;
+      width:max-content;
       align-items:center;
       gap:10px;
-      margin:0 0 18px;
-      color:var(--muted);
+      margin:0 0 22px;
+      color:var(--lime);
       font-size:12px;
-      font-weight:750;
-      letter-spacing:.14em;
+      font-weight:850;
+      letter-spacing:.18em;
       text-transform:uppercase;
     }
-    .eyebrow:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 0 5px rgba(4,120,87,.10)}
-    h1{margin:0;max-width:760px;font-size:clamp(40px,7vw,82px);line-height:.95;letter-spacing:-.07em;font-weight:850;color:var(--accent)}
-    .lede{margin:20px 0 0;max-width:760px;color:var(--muted);font-size:18px;line-height:1.65;letter-spacing:-.02em}
+    .eyebrow:before{content:"";width:38px;height:1px;background:linear-gradient(90deg,var(--lime),transparent)}
+    h1{margin:0;max-width:770px;font-size:clamp(48px,8vw,104px);line-height:.86;letter-spacing:-.09em;font-weight:900;color:var(--ink)}
+    .accent-text{color:transparent;background:linear-gradient(90deg,var(--lime),var(--cyan));-webkit-background-clip:text;background-clip:text}
+    .lede{margin:24px 0 0;max-width:710px;color:var(--muted);font-size:18px;line-height:1.65;letter-spacing:-.02em}
+    .hero-panel{
+      align-self:end;
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:rgba(255,255,255,.045);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+      backdrop-filter:blur(18px);
+      padding:22px;
+    }
+    .metric{display:grid;grid-template-columns:1fr auto;gap:8px;padding:14px 0;border-bottom:1px solid var(--line)}
+    .metric:first-child{padding-top:0}.metric:last-child{padding-bottom:0;border-bottom:0}
+    .metric span{color:var(--subtle);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .metric strong{font-size:26px;line-height:1;color:var(--ink);letter-spacing:-.05em}.metric em{align-self:end;color:var(--lime);font-size:12px;font-style:normal;font-weight:800}
     main{padding:0 0 42px}
     .toolbar{
       display:grid;
       grid-template-columns:minmax(260px,460px) 1fr auto;
-      gap:16px;
+      gap:14px;
       align-items:center;
-      margin:0 0 18px;
-      padding:8px;
+      margin:0 0 16px;
+      padding:10px;
       border:1px solid var(--line);
-      border-radius:22px;
-      background:rgba(255,255,255,.74);
-      box-shadow:var(--shadow-sm);
-      backdrop-filter:blur(16px);
+      border-radius:24px;
+      background:rgba(16,23,34,.78);
+      box-shadow:var(--shadow-soft);
+      backdrop-filter:blur(18px);
     }
     .search{position:relative}
-    .search:before{content:"⌕";position:absolute;left:18px;top:50%;transform:translateY(-53%);color:var(--subtle);font-size:20px;line-height:1}
+    .search:before{content:"";position:absolute;left:18px;top:50%;width:14px;height:14px;border:2px solid var(--subtle);border-radius:50%;transform:translateY(-56%)}
+    .search:after{content:"";position:absolute;left:31px;top:58%;width:8px;height:2px;background:var(--subtle);transform:rotate(45deg)}
     input{
       width:100%;
       appearance:none;
       border:1px solid var(--line);
       border-radius:16px;
       outline:none;
-      background:var(--surface);
+      background:#0b1119;
       color:var(--ink);
-      padding:15px 18px 15px 48px;
-      font:600 14px/1.2 inherit;
-      box-shadow:var(--shadow-sm);
+      padding:16px 18px 16px 50px;
+      font:700 14px/1.2 inherit;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
       transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
     }
-    input::placeholder{color:var(--subtle);font-weight:500}
-    input:focus{border-color:rgba(37,99,235,.55);box-shadow:0 0 0 4px rgba(37,99,235,.12);background:#fff}
-    .toolbar-spacer{min-height:1px}
+    input::placeholder{color:var(--subtle);font-weight:600}
+    input:focus{border-color:rgba(114,247,255,.55);box-shadow:0 0 0 4px rgba(114,247,255,.10);background:#0f1722}
+    .toolbar-note{color:var(--subtle);font-size:12px;font-weight:700;letter-spacing:.04em}
     .status{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-height:46px;
-      border:1px solid var(--line);
+      min-height:48px;
+      border:1px solid rgba(185,255,102,.28);
       border-radius:999px;
-      background:var(--surface);
-      color:var(--muted);
+      background:rgba(185,255,102,.08);
+      color:var(--lime);
       padding:0 18px;
       font-size:13px;
-      font-weight:700;
+      font-weight:850;
       white-space:nowrap;
-      box-shadow:var(--shadow-sm);
     }
     .table-card{
       overflow:hidden;
-      border:1px solid rgba(209,213,219,.95);
+      border:1px solid var(--line);
       border-radius:28px;
-      background:var(--surface);
-      box-shadow:var(--shadow-md);
+      background:linear-gradient(180deg,rgba(20,29,42,.96),rgba(12,17,25,.98));
+      box-shadow:var(--shadow-soft);
     }
     .table-wrap{overflow:auto;max-height:none}
-    table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;background:var(--surface)}
+    table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;background:transparent}
     th,td{padding:18px 22px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line);font-size:14px}
     th{
       position:sticky;
       top:0;
       z-index:1;
-      background:rgba(249,250,251,.94);
-      color:var(--muted);
+      background:rgba(12,17,25,.96);
+      color:var(--subtle);
       font-size:11px;
-      font-weight:800;
-      letter-spacing:.10em;
+      font-weight:850;
+      letter-spacing:.14em;
       text-transform:uppercase;
       backdrop-filter:blur(14px);
     }
-    td{color:var(--ink);background:var(--surface)}
-    tbody tr{transition:background .16s ease,transform .16s ease}
-    tbody tr:hover td{background:#f8fafc}
+    td{color:var(--ink);background:transparent}
+    tbody tr{transition:background .16s ease}
+    tbody tr:hover td{background:rgba(255,255,255,.035)}
     tbody tr:last-child td{border-bottom:0}
     .symbol{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-width:74px;
+      min-width:76px;
       padding:8px 10px;
-      border:1px solid var(--line-strong);
+      border:1px solid rgba(114,247,255,.28);
       border-radius:999px;
-      background:linear-gradient(180deg,#fff,#f3f4f6);
-      color:var(--accent);
+      background:linear-gradient(180deg,rgba(114,247,255,.10),rgba(185,255,102,.06));
+      color:var(--cyan);
       font-size:12px;
-      font-weight:850;
-      letter-spacing:.06em;
+      font-weight:900;
+      letter-spacing:.08em;
       white-space:nowrap;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
     }
     .muted{color:var(--muted)}
-    .error{color:var(--danger);font-weight:750}
+    .error{color:var(--danger);font-weight:800}
     footer{padding:0 0 34px;color:var(--subtle);font-size:12px;text-align:right}
-    @media(max-width:860px){
-      .shell{width:min(100% - 28px,1180px)}
-      header{padding:34px 0 22px}
-      .hero{border-radius:24px;padding:28px}
-      .lede{font-size:16px}
-      .toolbar{grid-template-columns:1fr;gap:10px;border-radius:20px}
-      .toolbar-spacer{display:none}
-      .status{width:100%;justify-content:flex-start;border-radius:16px}
-      th,td{padding:15px 16px}
-      footer{text-align:left}
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;min-height:auto;padding:34px}.hero-panel{align-self:stretch;display:grid;grid-template-columns:repeat(3,1fr);gap:0}.metric{padding:0 14px;border-bottom:0;border-right:1px solid var(--line)}.metric:first-child{padding-left:0}.metric:last-child{border-right:0;padding-right:0}
+      .toolbar{grid-template-columns:1fr;gap:10px}.toolbar-note{display:none}.status{justify-content:flex-start;border-radius:16px;width:100%}
+    }
+    @media(max-width:640px){
+      body:after{display:none}.shell{width:min(100% - 24px,1180px)}header{padding:18px 0 16px}.navline{margin-bottom:14px;font-size:10px}.timestamp{display:none}
+      .hero{border-radius:24px;padding:24px;gap:24px}.hero:after{width:120px;height:120px;right:18px;bottom:18px;opacity:.42}.eyebrow{font-size:10px;margin-bottom:16px}h1{font-size:clamp(42px,17vw,70px);letter-spacing:-.08em}.lede{font-size:15px;line-height:1.55;margin-top:18px}
+      .hero-panel{grid-template-columns:1fr;border-radius:18px;padding:18px}.metric{grid-template-columns:1fr auto;padding:12px 0;border-right:0;border-bottom:1px solid var(--line)}.metric:first-child{padding-top:0}.metric:last-child{border-bottom:0}.metric strong{font-size:22px}
+      main{padding-bottom:28px}.toolbar{border-radius:20px;padding:8px;margin-bottom:12px}input{font-size:16px;min-height:52px}.status{min-height:44px;font-size:12px}
+      .table-card{border:0;background:transparent;box-shadow:none;border-radius:0}.table-wrap{overflow:visible}table{display:block;min-width:0;width:100%}thead{display:none}tbody{display:grid;gap:12px}tr{display:grid;gap:12px;padding:16px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(20,29,42,.98),rgba(12,17,25,.98));box-shadow:0 16px 38px rgba(0,0,0,.24)}td{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;align-items:center;padding:0;border-bottom:0;background:transparent;font-size:14px;min-width:0}td:before{content:attr(data-label);color:var(--subtle);font-size:10px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.symbol{min-width:0;width:max-content}td a{overflow-wrap:anywhere}td[colspan]{display:block}.muted[data-label]:before,.error[data-label]:before{display:none}footer{text-align:left;padding-bottom:24px}
     }
   </style>
 </head>
 <body>
 <header>
+  <div class="shell navline">
+    <span class="brand">Market Agent PoC</span>
+    <span class="timestamp">Constituent intelligence board</span>
+  </div>
   <div class="shell hero">
-    <p class="eyebrow">Market Agent PoC</p>
-    <h1>NASDAQ-100 Companies</h1>
-    <p class="lede">A clean reference board for NASDAQ-100 constituents, combining ticker symbols, company names and official websites from public market data sources.</p>
+    <div>
+      <p class="eyebrow">Live public market directory</p>
+      <h1>NASDAQ-100 <span class="accent-text">Companies</span></h1>
+      <p class="lede">A focused equity reference interface for constituents, tickers and official company websites — designed as a compact market terminal rather than a generic data table.</p>
+    </div>
+    <aside class="hero-panel" aria-label="Dataset summary">
+      <div class="metric"><span>Universe</span><strong>100</strong><em>stocks</em></div>
+      <div class="metric"><span>Source</span><strong>Wiki</strong><em>live</em></div>
+      <div class="metric"><span>Format</span><strong>Web</strong><em>links</em></div>
+    </aside>
   </div>
 </header>
 <main class="shell">
   <div class="toolbar">
-    <div class="search"><input id="q" placeholder="Filter by symbol or company…" /></div>
-    <div class="toolbar-spacer"></div>
+    <div class="search"><input id="q" placeholder="Filter by ticker or company…" /></div>
+    <div class="toolbar-note">Type to isolate a constituent instantly.</div>
     <span id="status" class="status">Loading constituents…</span>
   </div>
   <section class="table-card" aria-label="NASDAQ-100 company list">
@@ -208,6 +294,7 @@ const WD_API='https://www.wikidata.org/w/api.php';
 let companies=[];
 const $=id=>document.getElementById(id);
 function cleanTitle(s){return (s||'').replace(/\[.*?\]/g,'').trim();}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));}
 async function getJson(url){const r=await fetch(url); if(!r.ok) throw new Error(r.status+' '+r.statusText); return r.json();}
 async function loadConstituents(){
   const url=`${WIKI_API}?origin=*&action=parse&page=Nasdaq-100&prop=text&format=json`;
@@ -247,7 +334,7 @@ async function loadWebsite(company){
 function render(){
   const q=$('q').value.trim().toLowerCase();
   const filtered=companies.filter(c=>`${c.ticker} ${c.name}`.toLowerCase().includes(q));
-  $('rows').innerHTML=filtered.map(c=>`<tr><td><span class="symbol">${c.ticker}</span></td><td>${c.name}</td><td>${c.website?`<a href="${c.website}" target="_blank" rel="noopener">${c.website.replace(/^https?:\/\//,'').replace(/\/$/,'')}</a>`:'<span class="muted">Loading / unavailable</span>'}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No matches</td></tr>';
+  $('rows').innerHTML=filtered.map(c=>`<tr><td data-label="Symbol"><span class="symbol">${esc(c.ticker)}</span></td><td data-label="Name">${esc(c.name)}</td><td data-label="Website">${c.website?`<a href="${esc(c.website)}" target="_blank" rel="noopener">${esc(c.website.replace(/^https?:\/\//,'').replace(/\/$/,''))}</a>`:'<span class="muted">Loading / unavailable</span>'}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No matches</td></tr>';
   $('status').textContent=`${filtered.length} shown / ${companies.length} constituents`;
 }
 (async function init(){
@@ -257,7 +344,7 @@ function render(){
     let done=0;
     for(const c of companies){ c.website=await loadWebsite(c); done++; if(done%5===0) render(); }
     render();
-  }catch(e){ $('status').innerHTML=`<span class="error">Failed to load data: ${e.message}</span>`; $('rows').innerHTML='<tr><td colspan="3" class="error">Could not load NASDAQ-100 data.</td></tr>'; }
+  }catch(e){ $('status').innerHTML=`<span class="error">Failed to load data: ${esc(e.message)}</span>`; $('rows').innerHTML='<tr><td colspan="3" class="error">Could not load NASDAQ-100 data.</td></tr>'; }
 })();
 $('q').addEventListener('input',render);
 </script>
