@@ -249,7 +249,7 @@
       .hero{border-radius:24px;padding:24px;gap:24px}.hero:after{width:120px;height:120px;right:18px;bottom:18px;opacity:.42}.eyebrow{font-size:10px;margin-bottom:16px}h1{font-size:clamp(42px,17vw,70px);letter-spacing:-.08em}.lede{font-size:15px;line-height:1.55;margin-top:18px}
       .hero-panel{grid-template-columns:1fr;border-radius:18px;padding:18px}.metric{grid-template-columns:1fr auto;padding:12px 0;border-right:0;border-bottom:1px solid var(--line)}.metric:first-child{padding-top:0}.metric:last-child{border-bottom:0}.metric strong{font-size:22px}
       main{padding-bottom:28px}.toolbar{border-radius:20px;padding:8px;margin-bottom:12px}input{font-size:16px;min-height:52px}.status{min-height:44px;font-size:12px}
-      .table-card{border:0;background:transparent;box-shadow:none;border-radius:0}.table-wrap{overflow:visible}table{display:block;min-width:0;width:100%}thead{display:none}tbody{display:grid;gap:12px}tr{display:grid;gap:12px;padding:16px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,rgba(20,29,42,.98),rgba(12,17,25,.98));box-shadow:0 16px 38px rgba(0,0,0,.24)}td{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;align-items:center;padding:0;border-bottom:0;background:transparent;font-size:14px;min-width:0}td:before{content:attr(data-label);color:var(--subtle);font-size:10px;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.symbol{min-width:0;width:max-content}td a{overflow-wrap:anywhere}td[colspan]{display:block}.muted[data-label]:before,.error[data-label]:before{display:none}footer{text-align:left;padding-bottom:24px}
+      .table-card{border-radius:20px}.table-wrap{overflow:auto;-webkit-overflow-scrolling:touch}table{min-width:620px}th,td{padding:13px 14px;font-size:13px}th{font-size:10px}.symbol{min-width:64px;padding:7px 9px;font-size:11px}td a{overflow-wrap:anywhere}footer{text-align:left;padding-bottom:24px}
     }
   </style>
 </head>
@@ -334,7 +334,7 @@ async function loadWebsite(company){
 function render(){
   const q=$('q').value.trim().toLowerCase();
   const filtered=companies.filter(c=>`${c.ticker} ${c.name}`.toLowerCase().includes(q));
-  $('rows').innerHTML=filtered.map(c=>`<tr><td data-label="Symbol"><span class="symbol">${esc(c.ticker)}</span></td><td data-label="Name">${esc(c.name)}</td><td data-label="Website">${c.website?`<a href="${esc(c.website)}" target="_blank" rel="noopener">${esc(c.website.replace(/^https?:\/\//,'').replace(/\/$/,''))}</a>`:'<span class="muted">Loading / unavailable</span>'}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No matches</td></tr>';
+  $('rows').innerHTML=filtered.map(c=>`<tr><td><span class="symbol">${esc(c.ticker)}</span></td><td>${esc(c.name)}</td><td>${c.website?`<a href="${esc(c.website)}" target="_blank" rel="noopener">${esc(c.website.replace(/^https?:\/\//,'').replace(/\/$/,''))}</a>`:'<span class="muted">Loading / unavailable</span>'}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No matches</td></tr>';
   $('status').textContent=`${filtered.length} shown / ${companies.length} constituents`;
 }
 (async function init(){
