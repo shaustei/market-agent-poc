@@ -5,55 +5,203 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NASDAQ-100 Companies</title>
   <style>
-    :root{--bg:#121029;--panel:#211b46;--panel-2:#30265f;--ink:#fff7d6;--muted:#b9aee7;--cyan:#4ff4ff;--pink:#ff4fd8;--green:#59ff9c;--yellow:#ffe45c;--red:#ff6b6b;--grid:rgba(255,255,255,.06)}
+    :root{
+      --bg:#f6f7f9;
+      --surface:#ffffff;
+      --surface-2:#f9fafb;
+      --ink:#111827;
+      --muted:#6b7280;
+      --subtle:#9ca3af;
+      --line:#e5e7eb;
+      --line-strong:#d1d5db;
+      --accent:#0f172a;
+      --accent-soft:#eef2ff;
+      --focus:#2563eb;
+      --success:#047857;
+      --danger:#b91c1c;
+      --shadow-sm:0 1px 2px rgba(15,23,42,.05);
+      --shadow-md:0 12px 30px rgba(15,23,42,.08);
+      --shadow-lg:0 28px 80px rgba(15,23,42,.12);
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#0b0920 0%,#171236 55%,#0d1024 100%);color:var(--ink);font-family:"Courier New",Courier,monospace;image-rendering:pixelated;min-height:100vh}
-    body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:16px 16px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),rgba(0,0,0,.25));}
-    header{position:relative;padding:34px 24px 28px;background:var(--panel);border-bottom:6px solid #000;box-shadow:0 6px 0 var(--pink),0 12px 0 #000;text-align:center;overflow:hidden}
-    header:before,header:after{content:"";position:absolute;width:14px;height:14px;background:var(--yellow);box-shadow:32px 0 0 var(--cyan),64px 0 0 var(--green),96px 0 0 var(--pink)}
-    header:before{left:22px;top:18px}header:after{right:118px;bottom:18px}
-    h1{margin:0 0 12px;font-size:clamp(28px,5vw,56px);line-height:1;text-transform:uppercase;letter-spacing:2px;color:var(--yellow);text-shadow:4px 4px 0 #000,8px 8px 0 var(--pink)}
-    p{margin:0 auto;color:var(--muted);max-width:900px;font-size:15px;line-height:1.55;text-shadow:2px 2px 0 #000}
-    main{position:relative;padding:36px 20px;max-width:1180px;margin:0 auto}
-    .bar{display:flex;gap:14px;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;background:var(--panel);border:4px solid #000;box-shadow:6px 6px 0 #000;padding:14px}
-    input{appearance:none;background:#080717;color:var(--green);border:4px solid #000;box-shadow:4px 4px 0 var(--cyan);padding:12px 14px;min-width:min(100%,340px);font:700 14px "Courier New",Courier,monospace;outline:none;text-transform:uppercase}
-    input:focus{box-shadow:4px 4px 0 var(--pink)}
-    input::placeholder{color:#7a72a8;text-transform:none}
-    .status{display:inline-block;font-size:13px;color:var(--yellow);background:#080717;border:3px solid #000;padding:10px 12px;box-shadow:4px 4px 0 var(--green);font-weight:700;text-transform:uppercase}
-    .table-wrap{border:5px solid #000;background:#000;box-shadow:8px 8px 0 var(--pink),14px 14px 0 #000;overflow:auto}
-    table{width:100%;border-collapse:collapse;background:var(--panel);min-width:760px}
-    th,td{padding:14px 16px;border:3px solid #000;text-align:left;font-size:14px;vertical-align:middle}
-    th{background:var(--panel-2);color:var(--cyan);font-weight:900;text-transform:uppercase;letter-spacing:1px;position:sticky;top:0;z-index:1;text-shadow:2px 2px 0 #000}
-    td{background:#181337;color:var(--ink)}
-    tr:nth-child(even) td{background:#201944}
-    tr:hover td{background:#33256e;color:#fff;box-shadow:inset 0 0 0 3px var(--yellow)}
-    .symbol{font-weight:900;color:var(--green);text-shadow:2px 2px 0 #000;white-space:nowrap}
-    .muted{color:var(--muted)}.error{color:var(--red);font-weight:900}
-    a{color:var(--cyan);font-weight:900;text-decoration:none;text-shadow:2px 2px 0 #000;word-break:break-word}
-    a:hover{color:var(--yellow);background:#000;outline:3px solid var(--pink)}
-    .coin{display:inline-block;width:10px;height:10px;margin-right:8px;background:var(--yellow);box-shadow:0 0 0 3px #000,5px 5px 0 #000;vertical-align:middle}
-    footer{max-width:1180px;margin:0 auto 28px;padding:0 20px;color:#7f78aa;font-size:12px;text-align:right}
-    @media(max-width:700px){header{text-align:left}h1{text-shadow:3px 3px 0 #000,6px 6px 0 var(--pink)}.bar{align-items:stretch}.status{width:100%}}
+    html{background:var(--bg)}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--ink);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%,rgba(37,99,235,.10),transparent 30%),
+        radial-gradient(circle at 88% 12%,rgba(15,23,42,.08),transparent 26%),
+        linear-gradient(180deg,#fff 0%,var(--bg) 42%,#eef1f5 100%);
+      letter-spacing:-.01em;
+    }
+    a{color:var(--accent);font-weight:650;text-decoration:none;text-underline-offset:4px}
+    a:hover{text-decoration:underline}
+    .shell{width:min(1180px,calc(100% - 40px));margin:0 auto}
+    header{padding:72px 0 34px}
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(209,213,219,.9);
+      border-radius:32px;
+      background:linear-gradient(135deg,rgba(255,255,255,.96),rgba(249,250,251,.88));
+      box-shadow:var(--shadow-lg);
+      padding:42px;
+      isolation:isolate;
+    }
+    .hero:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:
+        linear-gradient(90deg,rgba(37,99,235,.14),transparent 36%,rgba(15,23,42,.10)),
+        radial-gradient(circle at 80% 0%,rgba(37,99,235,.14),transparent 32%);
+      z-index:-1;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      margin:0 0 18px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:750;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+    .eyebrow:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 0 5px rgba(4,120,87,.10)}
+    h1{margin:0;max-width:760px;font-size:clamp(40px,7vw,82px);line-height:.95;letter-spacing:-.07em;font-weight:850;color:var(--accent)}
+    .lede{margin:20px 0 0;max-width:760px;color:var(--muted);font-size:18px;line-height:1.65;letter-spacing:-.02em}
+    main{padding:0 0 42px}
+    .toolbar{
+      display:grid;
+      grid-template-columns:minmax(260px,460px) 1fr auto;
+      gap:16px;
+      align-items:center;
+      margin:0 0 18px;
+      padding:8px;
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:rgba(255,255,255,.74);
+      box-shadow:var(--shadow-sm);
+      backdrop-filter:blur(16px);
+    }
+    .search{position:relative}
+    .search:before{content:"⌕";position:absolute;left:18px;top:50%;transform:translateY(-53%);color:var(--subtle);font-size:20px;line-height:1}
+    input{
+      width:100%;
+      appearance:none;
+      border:1px solid var(--line);
+      border-radius:16px;
+      outline:none;
+      background:var(--surface);
+      color:var(--ink);
+      padding:15px 18px 15px 48px;
+      font:600 14px/1.2 inherit;
+      box-shadow:var(--shadow-sm);
+      transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+    }
+    input::placeholder{color:var(--subtle);font-weight:500}
+    input:focus{border-color:rgba(37,99,235,.55);box-shadow:0 0 0 4px rgba(37,99,235,.12);background:#fff}
+    .toolbar-spacer{min-height:1px}
+    .status{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:46px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:var(--surface);
+      color:var(--muted);
+      padding:0 18px;
+      font-size:13px;
+      font-weight:700;
+      white-space:nowrap;
+      box-shadow:var(--shadow-sm);
+    }
+    .table-card{
+      overflow:hidden;
+      border:1px solid rgba(209,213,219,.95);
+      border-radius:28px;
+      background:var(--surface);
+      box-shadow:var(--shadow-md);
+    }
+    .table-wrap{overflow:auto;max-height:none}
+    table{width:100%;min-width:760px;border-collapse:separate;border-spacing:0;background:var(--surface)}
+    th,td{padding:18px 22px;text-align:left;vertical-align:middle;border-bottom:1px solid var(--line);font-size:14px}
+    th{
+      position:sticky;
+      top:0;
+      z-index:1;
+      background:rgba(249,250,251,.94);
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      backdrop-filter:blur(14px);
+    }
+    td{color:var(--ink);background:var(--surface)}
+    tbody tr{transition:background .16s ease,transform .16s ease}
+    tbody tr:hover td{background:#f8fafc}
+    tbody tr:last-child td{border-bottom:0}
+    .symbol{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:74px;
+      padding:8px 10px;
+      border:1px solid var(--line-strong);
+      border-radius:999px;
+      background:linear-gradient(180deg,#fff,#f3f4f6);
+      color:var(--accent);
+      font-size:12px;
+      font-weight:850;
+      letter-spacing:.06em;
+      white-space:nowrap;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+    }
+    .muted{color:var(--muted)}
+    .error{color:var(--danger);font-weight:750}
+    footer{padding:0 0 34px;color:var(--subtle);font-size:12px;text-align:right}
+    @media(max-width:860px){
+      .shell{width:min(100% - 28px,1180px)}
+      header{padding:34px 0 22px}
+      .hero{border-radius:24px;padding:28px}
+      .lede{font-size:16px}
+      .toolbar{grid-template-columns:1fr;gap:10px;border-radius:20px}
+      .toolbar-spacer{display:none}
+      .status{width:100%;justify-content:flex-start;border-radius:16px}
+      th,td{padding:15px 16px}
+      footer{text-align:left}
+    }
   </style>
 </head>
 <body>
 <header>
-  <h1>NASDAQ-100</h1>
-  <p><span class="coin"></span>Company symbols, names and official websites. Live constituent data is loaded from Wikipedia and company websites from Wikidata.</p>
+  <div class="shell hero">
+    <p class="eyebrow">Market Agent PoC</p>
+    <h1>NASDAQ-100 Companies</h1>
+    <p class="lede">A clean reference board for NASDAQ-100 constituents, combining ticker symbols, company names and official websites from public market data sources.</p>
+  </div>
 </header>
-<main>
-  <div class="bar">
-    <input id="q" placeholder="Filter by symbol or company…" />
+<main class="shell">
+  <div class="toolbar">
+    <div class="search"><input id="q" placeholder="Filter by symbol or company…" /></div>
+    <div class="toolbar-spacer"></div>
     <span id="status" class="status">Loading constituents…</span>
   </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>Symbol</th><th>Name</th><th>Company website</th></tr></thead>
-      <tbody id="rows"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody>
-    </table>
-  </div>
+  <section class="table-card" aria-label="NASDAQ-100 company list">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Symbol</th><th>Name</th><th>Company website</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="3" class="muted">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
 </main>
-<footer>8-bit market board · static Netlify page</footer>
+<footer class="shell">Static Netlify page · live public data</footer>
 <script>
 const WIKI_API='https://en.wikipedia.org/w/api.php';
 const WD_API='https://www.wikidata.org/w/api.php';
@@ -99,7 +247,7 @@ async function loadWebsite(company){
 function render(){
   const q=$('q').value.trim().toLowerCase();
   const filtered=companies.filter(c=>`${c.ticker} ${c.name}`.toLowerCase().includes(q));
-  $('rows').innerHTML=filtered.map(c=>`<tr><td class="symbol">${c.ticker}</td><td>${c.name}</td><td>${c.website?`<a href="${c.website}" target="_blank" rel="noopener">${c.website.replace(/^https?:\/\//,'').replace(/\/$/,'')}</a>`:'<span class="muted">Loading / unavailable</span>'}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No matches</td></tr>';
+  $('rows').innerHTML=filtered.map(c=>`<tr><td><span class="symbol">${c.ticker}</span></td><td>${c.name}</td><td>${c.website?`<a href="${c.website}" target="_blank" rel="noopener">${c.website.replace(/^https?:\/\//,'').replace(/\/$/,'')}</a>`:'<span class="muted">Loading / unavailable</span>'}</td></tr>`).join('') || '<tr><td colspan="3" class="muted">No matches</td></tr>';
   $('status').textContent=`${filtered.length} shown / ${companies.length} constituents`;
 }
 (async function init(){
