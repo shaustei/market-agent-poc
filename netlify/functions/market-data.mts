@@ -10,22 +10,51 @@ const SYMBOLS: Record<string, string> = {
 const FALLBACK: Record<string, { price: number | null; currency: string; previousClose: number | null; asOf: string }> = {
   HNR1: { price: 251.00, currency: "EUR", previousClose: 253.00, asOf: "2026-07-15T11:55:00+02:00" },
   EUNL: { price: null, currency: "EUR", previousClose: null, asOf: "2026-07-15T10:00:00+02:00" },
-  CAT: { price: 938.39, currency: "USD", previousClose: null, asOf: "2026-07-09T16:00:00-04:00" },
+  CAT: { price: 903.51, currency: "USD", previousClose: null, asOf: "2026-07-14T16:00:00-04:00" },
   JBL: { price: 326.82, currency: "USD", previousClose: 321.96, asOf: "2026-07-14T16:00:00-04:00" },
   LMT: { price: 514.99, currency: "USD", previousClose: 520.66, asOf: "2026-07-14T16:00:00-04:00" },
-  LHA: { price: null, currency: "EUR", previousClose: null, asOf: "2026-07-15T10:00:00+02:00" },
+  LHA: { price: 8.11, currency: "EUR", previousClose: null, asOf: "2026-07-15T10:00:00+02:00" },
 };
 
-function compactSeries(values: Array<{ t: number; v: number }>, maxPoints = 64) {
+type Point = { t: number; v: number };
+
+function compactSeries(values: Point[], maxPoints = 64) {
   if (values.length <= maxPoints) return values;
   const step = (values.length - 1) / (maxPoints - 1);
   return Array.from({ length: maxPoints }, (_, i) => values[Math.round(i * step)]);
 }
 
-function average(values: number[], count: number) {
-  if (values.length < count) return null;
-  const slice = values.slice(-count);
+function average(values: number[], count: number, end = values.length) {
+  if (end < count) return null;
+  const slice = values.slice(end - count, end);
   return slice.reduce((sum, value) => sum + value, 0) / slice.length;
+}
+
+function returnFor(values: number[], days: number) {
+  if (values.length <= days || !values.at(-1) || !values.at(-(days + 1))) return null;
+  return (values.at(-1)! / values.at(-(days + 1))! - 1) * 100;
+}
+
+function rsi(values: number[], period = 14) {
+  if (values.length <= period) return null;
+  let gains = 0;
+  let losses = 0;
+  const start = values.length - period;
+  for (let i = start; i < values.length; i += 1) {
+    const delta = values[i] - values[i - 1];
+    if (delta >= 0) gains += delta;
+    else losses -= delta;
+  }
+  if (losses === 0) return 100;
+  const rs = (gains / period) / (losses / period);
+  return 100 - 100 / (1 + rs);
+}
+
+function slopePercent(values: number[], window: number, lookback = 20) {
+  const current = average(values, window);
+  const prior = average(values, window, values.length - lookback);
+  if (current == null || prior == null || prior === 0) return null;
+  return (current / prior - 1) * 100;
 }
 
 async function loadChart(symbol: string) {
@@ -33,7 +62,7 @@ async function loadChart(symbol: string) {
   const response = await fetch(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "Mozilla/5.0 (compatible; MarketAgentPOC/1.0)",
+      "User-Agent": "Mozilla/5.0 (compatible; MarketAgentPOC/1.1)",
     },
   });
   if (!response.ok) throw new Error(`Market data ${response.status}`);
@@ -47,15 +76,11 @@ async function loadChart(symbol: string) {
     ?? [];
   const series = timestamps
     .map((t, index) => ({ t, v: closes[index] }))
-    .filter((point): point is { t: number; v: number } => Number.isFinite(point.v));
+    .filter((point): point is Point => Number.isFinite(point.v));
   const values = series.map((point) => point.v);
   const meta = result.meta ?? {};
   const price = Number(meta.regularMarketPrice ?? values.at(-1));
   const previousClose = Number(meta.previousClose ?? meta.chartPreviousClose ?? values.at(-2));
-  const high52 = values.length ? Math.max(...values) : null;
-  const low52 = values.length ? Math.min(...values) : null;
-  const ma50 = average(values, 50);
-  const ma200 = average(values, 200);
 
   return {
     price: Number.isFinite(price) ? price : null,
@@ -64,10 +89,17 @@ async function loadChart(symbol: string) {
     exchangeName: meta.exchangeName ?? null,
     marketState: meta.marketState ?? null,
     asOf: meta.regularMarketTime ? new Date(meta.regularMarketTime * 1000).toISOString() : new Date().toISOString(),
-    high52,
-    low52,
-    ma50,
-    ma200,
+    high52: values.length ? Math.max(...values) : null,
+    low52: values.length ? Math.min(...values) : null,
+    ma20: average(values, 20),
+    ma50: average(values, 50),
+    ma200: average(values, 200),
+    ret20: returnFor(values, 20),
+    ret60: returnFor(values, 60),
+    ret120: returnFor(values, 120),
+    rsi14: rsi(values, 14),
+    ma50Slope20: slopePercent(values, 50, 20),
+    ma200Slope20: slopePercent(values, 200, 20),
     series: compactSeries(series),
   };
 }
@@ -85,8 +117,15 @@ export default async () => {
         error: error instanceof Error ? error.message : "Unknown error",
         high52: null,
         low52: null,
+        ma20: null,
         ma50: null,
         ma200: null,
+        ret20: null,
+        ret60: null,
+        ret120: null,
+        rsi14: null,
+        ma50Slope20: null,
+        ma200Slope20: null,
         series: [],
       }];
     }
@@ -101,7 +140,7 @@ export default async () => {
       fxSource = "live";
     }
   } catch {
-    // Keep the dated fallback; the UI labels the source explicitly.
+    // Dated fallback stays visible in the UI.
   }
 
   return new Response(JSON.stringify({
