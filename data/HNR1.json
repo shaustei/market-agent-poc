@@ -1,0 +1,42 @@
+{
+  "id": "HNR1",
+  "name": "Hannover Rück",
+  "region": "EU",
+  "kind": "Aktie",
+  "currency": "EUR",
+  "fallback": 251.0,
+  "pillars": {
+    "fundamental": 26,
+    "valuation": 14,
+    "news": 11,
+    "income": 9,
+    "technicalFallback": 12
+  },
+  "thesis": "Operativ robuste Rückversicherung mit hoher Ergebnisqualität und attraktivem Ausschüttungsprofil. Der Investmentcase bleibt positiv, solange Schadenbudget, Reserven und Kapitalquote stabil bleiben; nachlassende Renewal-Preise begrenzen jedoch die Bewertungsfantasie.",
+  "advice": "Halten; Rücksetzer selektiv nutzen.",
+  "adviceWhy": "Qualität und Dividende stützen. Ein aggressiver Zukauf ist erst attraktiver, wenn Bewertung oder technisches Bild mehr Sicherheitsmarge bieten.",
+  "dividend": "Positiv. Ausschüttungsfähigkeit und verlässliche Kapitalgenerierung sind zentrale Bestandteile des Cases; Großschäden und Regulierung können die Ausschüttung kurzfristig beeinflussen.",
+  "next": "12.08.2026 · Halbjahresbericht",
+  "triggers": [
+    {"date":"2026-09-24","title":"BofA Financials CEO Conference","background":"Management-Kommentare zu Renewal-Preisen, Schadeninflation und Kapitalallokation können Konsenserwartungen verschieben.","direction":"neutral","criteria":[1,1,1],"source":"https://www.hannover-re.com/en/investors/events-and-presentations/","sourceName":"Hannover Re IR","status":"bestätigt"},
+    {"date":"2026-09-23","title":"Berenberg / Goldman Sachs German Corporate Conference","background":"Relevant für Analystenrevisionen; kein Ergebnisereignis, daher geringere unmittelbare Kursrelevanz als ein Finanzbericht.","direction":"neutral","criteria":[0,1,1],"source":"https://www.hannover-re.com/en/investors/events-and-presentations/","sourceName":"Hannover Re IR","status":"bestätigt"},
+    {"date":"2026-09-22","title":"Baader Investment Conference","background":"Mögliche qualitative Updates zum Marktumfeld und zur Kapitalposition; üblicherweise keine neue Guidance.","direction":"neutral","criteria":[0,1,1],"source":"https://www.hannover-re.com/en/investors/events-and-presentations/","sourceName":"Hannover Re IR","status":"bestätigt"},
+    {"date":"2026-09-17","title":"Natixis FIG Conference","background":"Fokus auf Pricing, Reserven und Kapitalmanagement. Relevanz vor allem bei neuen Aussagen gegenüber dem Halbjahresbericht.","direction":"neutral","criteria":[0,1,1],"source":"https://www.hannover-re.com/en/investors/events-and-presentations/","sourceName":"Hannover Re IR","status":"bestätigt"},
+    {"date":"2026-09-01","title":"Commerzbank / ODDO BHF Corporate Conference","background":"Erste Investorenkommunikation nach den Halbjahreszahlen; mögliche Präzisierung der Guidance.","direction":"neutral","criteria":[1,1,1],"source":"https://www.hannover-re.com/en/investors/events-and-presentations/","sourceName":"Hannover Re IR","status":"bestätigt"},
+    {"date":"2026-08-12","title":"Halbjahresbericht 2026","background":"Wichtigster naher Trigger: Gewinn, Großschäden, Renewal-Preise, Kapitalquote und Dividendenfähigkeit werden neu bewertet.","direction":"neutral","criteria":[1,1,1],"source":"https://www.hannover-re.com/en/investors/events-and-presentations/","sourceName":"Hannover Re IR","status":"bestätigt"}
+  ],
+  "news": [
+    {"date":"2026-05-13","sourceName":"WSJ / Unternehmen","category":"Q1-Ergebnis","title":"Nettogewinn deutlich gestiegen; Großschäden unter Budget und Ausblick bestätigt","summary":"Das Quartal zeigte eine robuste Underwriting-Qualität. Entscheidend bleibt, ob die guten Schadenquoten bei normalisierenden Rückversicherungspreisen gehalten werden.","impactText":"Positiv fundamental; begrenzter zusätzlicher Kurstreiber, solange die Guidance unverändert bleibt.","impact":2,"source":"https://www.wsj.com/business/earnings/hannover-re-posts-net-profit-increase-with-large-losses-below-budget-7f317fce"},
+    {"date":"2026-05-11","sourceName":"Hannover Re IR","category":"Präsentation","title":"P&C-Reinsurance-Service-Result stark; Investmentergebnis ebenfalls höher","summary":"Die Ergebnisbeiträge aus Underwriting und Anlagen verbreitern die Gewinnbasis. Das reduziert die Abhängigkeit von einem einzelnen Ergebnistreiber.","impactText":"Positiv für Qualität und Dividendenfähigkeit; Renewal-Preise bleiben der Gegenpunkt.","impact":2,"source":"https://www.hannover-re.com/en/investors/results-and-reports/"}
+  ],
+  "tailwinds": ["Solide Kapitalisierung und konservatives Schadenbudget schaffen Puffer gegen Großschäden und unterstützen die Ausschüttungsfähigkeit.","Disziplinierte Zeichnungspolitik und diversifiziertes Rückversicherungsportfolio stabilisieren die Ergebnisqualität über den Zyklus.","Höhere Anlageerträge liefern einen zweiten Ergebnishebel neben dem Underwriting und verbessern den laufenden Cash-Ertrag.","Das etablierte Dividendenprofil erhöht die Attraktivität für einkommensorientierte Anleger und kann Kursrückgänge abfedern."],
+  "risks": ["Nachlassende Preise bei Vertragserneuerungen können Margen und Gewinnwachstum schneller normalisieren als vom Markt erwartet.","Naturkatastrophen, Großschäden und Schadeninflation können Quartalsergebnisse trotz guter Jahresplanung stark verzerren.","Reserveverstärkungen in älteren Schadenjahren wären ein Warnsignal für die bisher hohe Ergebnisqualität.","Eine hohe Bewertung relativ zum eigenen Zyklus reduziert die Sicherheitsmarge und macht die Aktie anfälliger für kleine Enttäuschungen."],
+  "analysts": [
+    {"house":"Zacks","date":"2026-06-22","rating":"Strong Sell","target":null,"reason":"Downgrade des US-ADR-Proxys; kurzfristige Ergebnis-/Bewertungsrisiken im Fokus.","quality":"Öffentlicher Rang: n. v.","source":"https://www.marketbeat.com/stocks/OTCMKTS/HVRRY/forecast/"},
+    {"house":"Berenberg","date":"2026-05-05","rating":"Strong Buy","target":null,"reason":"Upgrade des US-ADR-Proxys; Qualität und Ertragskraft wurden positiv gewichtet.","quality":"Haus-Rang 2/5","source":"https://www.marketbeat.com/stocks/OTCMKTS/HVRRY/forecast/"}
+  ],
+  "analystNote": "Kostenfrei verifizierbare Einzelratings beziehen sich hier auf den US-ADR/OTC-Proxy HVRRY. Sie sind ein Sentimentindikator, kein 1:1-Kursziel für Xetra.",
+  "insiders": [],
+  "insiderNote": "Im geprüften Vier-Monats-Fenster wurde keine verifizierte meldepflichtige Directors’-Dealings-Transaktion gefunden. Das bedeutet nicht, dass keine sonstigen Vergütungsvorgänge existierten.",
+  "insiderSource": "https://portal.mvp.bafin.de/database/DealingsInfo/"
+}
