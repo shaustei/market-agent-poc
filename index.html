@@ -7,58 +7,92 @@
   <title>Earnings-Kalender</title>
   <style>
     :root{
-      --bg:#f6f8fb;--card:#fff;--ink:#111827;--muted:#667085;--line:#e5e7eb;
-      --blue:#2563eb;--green:#067647;--amber:#b54708;--soft:#f9fafb;
-      --shadow:0 16px 46px rgba(16,24,40,.07)
+      --bg:#f7f9fc;--panel:#fff;--ink:#111827;--muted:#667085;--line:#e5e7eb;
+      --blue:#2563eb;--blue-bg:#eff6ff;--green:#067647;--green-bg:#ecfdf3;
+      --orange:#b54708;--orange-bg:#fffaeb;--red:#b42318;--red-bg:#fef3f2;
+      --shadow:0 12px 34px rgba(16,24,40,.07);--radius:18px;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;background:linear-gradient(180deg,#fbfcff,var(--bg));color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;letter-spacing:-.01em}
+    body{margin:0;min-height:100vh;background:linear-gradient(180deg,#fbfdff 0%,var(--bg) 100%);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;font-size:14px;letter-spacing:-.01em}
     a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
-    .wrap{width:min(1180px,calc(100% - 28px));margin:0 auto}
-    header{padding:18px 0 10px}
-    .top{display:flex;align-items:end;justify-content:space-between;gap:18px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.9);box-shadow:var(--shadow);padding:18px 20px}
-    .kicker{margin:0 0 5px;color:var(--blue);font-size:11px;font-weight:850;letter-spacing:.13em;text-transform:uppercase}
-    h1{margin:0;font-size:clamp(26px,3.5vw,42px);line-height:1;font-weight:850;letter-spacing:-.055em}
-    .meta{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.chip{border:1px solid var(--line);border-radius:999px;background:var(--soft);padding:7px 10px;font-size:12px;font-weight:750;color:#344054;white-space:nowrap}
-    main{padding:8px 0 24px}.panel{border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 10px 34px rgba(16,24,40,.05);overflow:hidden}
-    .row{display:grid;grid-template-columns:112px 72px 116px minmax(0,1fr) 88px 84px;gap:12px;align-items:center;min-height:48px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:13px}.row:last-child{border-bottom:0}
-    .head{min-height:34px;background:#f8fafc;color:#667085;font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase}.date,.time{font-variant-numeric:tabular-nums;font-weight:850}.company{font-weight:850;white-space:nowrap}.event{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#344054}.src{font-size:12px;font-weight:750}.status{justify-self:start;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:850}.confirmed{color:var(--green);background:#ecfdf3}.estimated{color:var(--amber);background:#fffaeb}.month{color:#475467;font-weight:850}
-    .notes{display:grid;grid-template-columns:1.35fr .65fr;gap:12px;margin-top:12px}.box{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px}.box h2{margin:0 0 8px;font-size:15px;letter-spacing:-.03em}.box p,.box li{margin:0;color:var(--muted);font-size:12.5px;line-height:1.45}.box ul{margin:0;padding-left:18px}.legend{display:flex;gap:8px;flex-wrap:wrap}.legend span{border:1px solid var(--line);border-radius:999px;padding:5px 8px;background:#fff;font-size:12px;color:#475467;font-weight:700}
-    footer{padding:0 0 14px;color:#98a2b3;font-size:11px;text-align:right}
-    @media(max-width:850px){.top{display:block}.meta{justify-content:flex-start;margin-top:12px}.row{grid-template-columns:92px 60px 96px minmax(0,1fr);gap:8px}.status,.src{display:none}.notes{grid-template-columns:1fr}.event{white-space:normal}.row{min-height:58px}}
+    .shell{width:min(1180px,calc(100% - 28px));margin:0 auto}
+    header{padding:18px 0 10px}.hero{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.92);box-shadow:var(--shadow);padding:18px 20px}
+    .kicker{margin:0 0 4px;color:var(--blue);font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}h1{margin:0;font-size:30px;line-height:1;font-weight:850;letter-spacing:-.055em}.sub{margin:8px 0 0;color:var(--muted);font-size:13px}.meta{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.chip{border:1px solid var(--line);border-radius:999px;background:#fff;padding:7px 10px;color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}.chip strong{color:var(--ink)}
+    main{padding:10px 0 26px}.card{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);box-shadow:var(--shadow);overflow:hidden}.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:#fbfcfe}.bar h2{margin:0;font-size:15px;letter-spacing:-.03em}.legend{display:flex;gap:8px;flex-wrap:wrap}.tag{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800}.ok{background:var(--green-bg);color:var(--green)}.est{background:var(--orange-bg);color:var(--orange)}.miss{background:var(--red-bg);color:var(--red)}
+    table{width:100%;border-collapse:collapse}th,td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;background:#fcfdff}td{line-height:1.28}.date,.time{font-variant-numeric:tabular-nums;font-weight:800;white-space:nowrap}.company{font-weight:820}.event{color:#344054}.src{font-size:12px;color:var(--muted);white-space:nowrap}.status{text-align:right}.month{display:inline-flex;min-width:72px;justify-content:center;border-radius:999px;background:var(--blue-bg);color:var(--blue);padding:4px 7px;font-size:11px;font-weight:850}.status .tag{justify-content:center;min-width:72px}.foot{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:12px}.note{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:12px 14px;box-shadow:0 8px 22px rgba(16,24,40,.04)}.note h3{margin:0 0 8px;font-size:14px}.note p,.note li{color:var(--muted);font-size:13px;line-height:1.45}.note p{margin:0}.note ul{margin:0;padding-left:18px}.small{font-size:12px;color:var(--muted)}footer{padding:0 0 18px;color:#98a2b3;font-size:11px;text-align:right}
+    @media(max-width:760px){.hero{display:block}.meta{justify-content:flex-start;margin-top:12px}table{font-size:12px}th,td{padding:7px 8px}.hide-sm{display:none}.foot{grid-template-columns:1fr}h1{font-size:25px}.src{white-space:normal}}
   </style>
 </head>
 <body>
-  <header class="wrap">
-    <section class="top">
-      <div><p class="kicker">Holdings Calendar</p><h1>Earnings-Kalender – nächste 3 Monate</h1></div>
-      <div class="meta"><span class="chip">Stand: 15.07.2026</span><span class="chip">Europe/Berlin</span><span class="chip">ETF ausgeschlossen</span><span class="chip">kompakt</span></div>
+  <header class="shell">
+    <section class="hero">
+      <div>
+        <p class="kicker">Holdings Calendar</p>
+        <h1>Earnings-Kalender – nächste 3 Monate</h1>
+        <p class="sub">Kompaktansicht. Lufthansa-Roadshows ausgeblendet; ETFs ausgeschlossen.</p>
+      </div>
+      <div class="meta">
+        <span class="chip">Stand: <strong>15.07.2026</strong></span>
+        <span class="chip">Zeitzone: <strong>Europe/Berlin</strong></span>
+        <span class="chip">Zeitraum: <strong>bis 15.10.2026</strong></span>
+      </div>
     </section>
   </header>
 
-  <main class="wrap">
-    <section class="panel" aria-label="Terminliste">
-      <div class="row head"><div>Datum</div><div>Zeit</div><div>Unternehmen</div><div>Termin</div><div>Quelle</div><div>Status</div></div>
-      <div class="row"><div class="date">[04.08.2026]</div><div class="time">[--:--]</div><div class="company">Lufthansa / LHA</div><div class="event">2nd Interim Report Jan–Jun 2026</div><div class="src"><a href="https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[12.08.2026]</div><div class="time">[--:--]</div><div class="company">Hannover Rück / HNR1</div><div class="event">Half-yearly Financial Report 2026</div><div class="src"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[25.08.2026]</div><div class="time">[--:--]</div><div class="company">Lufthansa / LHA</div><div class="event">mwb research German Select Online Conference</div><div class="src"><a href="https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[27.08.2026]</div><div class="time">[--:--]</div><div class="company">Lufthansa / LHA</div><div class="event">Kepler Cheuvreux Digital Transport Conference</div><div class="src"><a href="https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[01.09.2026]</div><div class="time">[--:--]</div><div class="company">Hannover Rück / HNR1</div><div class="event">Commerzbank & ODDO BHF Corporate Conference</div><div class="src"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[03.09.2026]</div><div class="time">[--:--]</div><div class="company">Lufthansa / LHA</div><div class="event">JP Morgan Roadshow, Milan</div><div class="src"><a href="https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[08.09.2026]</div><div class="time">[--:--]</div><div class="company">Lufthansa / LHA</div><div class="event">BNP Paribas Roadshow, Los Angeles</div><div class="src"><a href="https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[09.09.2026]</div><div class="time">[--:--]</div><div class="company">Lufthansa / LHA</div><div class="event">Jefferies Industrials Conference / Kepler Cheuvreux Autumn Conference</div><div class="src"><a href="https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[10.09.2026]</div><div class="time">[--:--]</div><div class="company">Lufthansa / LHA</div><div class="event">Deutsche Bank Aviation Forum / UBS BLT Conference</div><div class="src"><a href="https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[17.09.2026]</div><div class="time">[--:--]</div><div class="company">Hannover Rück / HNR1</div><div class="event">Natixis FIG Conference</div><div class="src"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[22.09.2026]</div><div class="time">[--:--]</div><div class="company">Hannover Rück / HNR1</div><div class="event">Baader Investment Conference</div><div class="src"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
-      <div class="row"><div class="date">[24.09.2026]</div><div class="time">[--:--]</div><div class="company">Hannover Rück / HNR1</div><div class="event">BofA Financials CEO Conference</div><div class="src"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">IR</a></div><div class="status confirmed">bestätigt</div></div>
+  <main class="shell">
+    <section class="card">
+      <div class="bar">
+        <h2>Chronologischer Kalender</h2>
+        <div class="legend"><span class="tag ok">bestätigt</span><span class="tag est">geschätzt</span></div>
+      </div>
+      <table aria-label="Earnings-Kalender">
+        <thead>
+          <tr><th>Monat</th><th>Datum</th><th>Zeit</th><th>Unternehmen / Ticker</th><th>Termin</th><th class="hide-sm">Quelle</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="month">Jul</span></td><td class="date">[23.07.2026]</td><td class="time">[14:30]</td><td class="company">Lockheed Martin / LMT</td><td class="event">Q2 2026 Earnings Results Conference Call/Webcast</td><td class="src hide-sm"><a href="https://investors.lockheedmartin.com/news-and-events/calendar-of-events" target="_blank" rel="noopener">IR Event Calendar</a></td><td class="status"><span class="tag ok">bestätigt</span></td>
+          </tr>
+          <tr>
+            <td><span class="month">Aug</span></td><td class="date">[04.08.2026]</td><td class="time">[--:--]</td><td class="company">Lufthansa / LHA</td><td class="event">2nd Interim Report January–June 2026</td><td class="src hide-sm"><a href="https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html" target="_blank" rel="noopener">Finanzkalender</a></td><td class="status"><span class="tag ok">bestätigt</span></td>
+          </tr>
+          <tr>
+            <td><span class="month">Aug</span></td><td class="date">[12.08.2026]</td><td class="time">[--:--]</td><td class="company">Hannover Rück / HNR1</td><td class="event">Half-yearly Financial Report 2026</td><td class="src hide-sm"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">Finanzkalender</a></td><td class="status"><span class="tag ok">bestätigt</span></td>
+          </tr>
+          <tr>
+            <td><span class="month">Sep</span></td><td class="date">[01.09.2026]</td><td class="time">[--:--]</td><td class="company">Hannover Rück / HNR1</td><td class="event">Commerzbank & ODDO BHF Corporate Conference 2026</td><td class="src hide-sm"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">Finanzkalender</a></td><td class="status"><span class="tag ok">bestätigt</span></td>
+          </tr>
+          <tr>
+            <td><span class="month">Sep</span></td><td class="date">[17.09.2026]</td><td class="time">[--:--]</td><td class="company">Hannover Rück / HNR1</td><td class="event">Natixis 2026 FIG Conference</td><td class="src hide-sm"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">Finanzkalender</a></td><td class="status"><span class="tag ok">bestätigt</span></td>
+          </tr>
+          <tr>
+            <td><span class="month">Sep</span></td><td class="date">[22.09.2026]</td><td class="time">[--:--]</td><td class="company">Hannover Rück / HNR1</td><td class="event">Baader Investment Conference 2026</td><td class="src hide-sm"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">Finanzkalender</a></td><td class="status"><span class="tag ok">bestätigt</span></td>
+          </tr>
+          <tr>
+            <td><span class="month">Sep</span></td><td class="date">[23.09.2026]</td><td class="time">[--:--]</td><td class="company">Hannover Rück / HNR1</td><td class="event">Berenberg and Goldman Sachs 15th Annual German Corporate Conference</td><td class="src hide-sm"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">Finanzkalender</a></td><td class="status"><span class="tag ok">bestätigt</span></td>
+          </tr>
+          <tr>
+            <td><span class="month">Sep</span></td><td class="date">[24.09.2026]</td><td class="time">[--:--]</td><td class="company">Hannover Rück / HNR1</td><td class="event">BofA 31st Annual Financials CEO Conference</td><td class="src hide-sm"><a href="https://www.hannover-re.com/en/investors/events-and-presentations/" target="_blank" rel="noopener">Finanzkalender</a></td><td class="status"><span class="tag ok">bestätigt</span></td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
-    <section class="notes">
-      <div class="box"><h2>Ohne belastbaren Termin</h2><ul><li>Caterpillar / CAT: kein bestätigter oder plausibel geschätzter Termin gefunden.</li><li>Jabil / JBL: Nasdaq weist aktuell kein Earnings Date aus.</li><li>Lockheed Martin / LMT: Nasdaq weist aktuell kein Earnings Date aus.</li></ul></div>
-      <div class="box"><h2>Legende</h2><div class="legend"><span>[--:--] keine belastbare Uhrzeit</span><span>* geschätzt</span><span>Quelle direkt verlinkt</span></div></div>
+    <section class="foot">
+      <div class="note">
+        <h3>Ohne belastbaren Termin</h3>
+        <ul>
+          <li>Caterpillar / CAT: kein bestätigter oder plausibel geschätzter Termin auf offizieller IR-Basis gefunden.</li>
+          <li>Jabil / JBL: Nasdaq weist aktuell kein Earnings Date aus; offizieller Q4-Termin nicht gefunden.</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h3>Filterregeln</h3>
+        <p>ETFs ausgeschlossen. Lufthansa-Roadshows und reine Investor-Roadshows werden künftig nicht angezeigt; relevante Financial Reports bleiben enthalten.</p>
+      </div>
     </section>
   </main>
 
-  <footer class="wrap">market-agent-poc · kompakter Earnings-Kalender · Stand 15.07.2026</footer>
+  <footer class="shell">Static Netlify page · Earnings-Kalender · Quellen: offizielle IR-/Finanzkalender, Nasdaq bei fehlenden offiziellen Terminen</footer>
 </body>
 </html>
