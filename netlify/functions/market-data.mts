@@ -17,6 +17,12 @@ const FALLBACK: Record<string, { price: number | null; currency: string; previou
 };
 
 type Point = { t: number; v: number };
+type SplitEvent = {
+  date?: number;
+  numerator?: number;
+  denominator?: number;
+  splitRatio?: string;
+};
 
 function compactSeries(values: Point[], maxPoints = 64) {
   if (values.length <= maxPoints) return values;
@@ -57,12 +63,66 @@ function slopePercent(values: number[], window: number, lookback = 20) {
   return (current / prior - 1) * 100;
 }
 
+function toSeries(timestamps: number[], closes: Array<number | null>): Point[] {
+  return timestamps
+    .map((t, index) => ({ t, v: closes[index] }))
+    .filter((point): point is Point => Number.isFinite(point.v));
+}
+
+function dateKey(timestamp: number, timeZone: string) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date(timestamp * 1000));
+}
+
+function splitFactorBetween(events: Record<string, SplitEvent> | undefined, from: number, to: number) {
+  let factor = 1;
+  for (const event of Object.values(events ?? {})) {
+    const eventTime = Number(event.date);
+    if (!Number.isFinite(eventTime) || eventTime <= from || eventTime > to) continue;
+
+    let numerator = Number(event.numerator);
+    let denominator = Number(event.denominator);
+    if ((!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator === 0) && event.splitRatio) {
+      const [left, right] = event.splitRatio.split(":").map(Number);
+      numerator = left;
+      denominator = right;
+    }
+    if (Number.isFinite(numerator) && Number.isFinite(denominator) && denominator > 0 && numerator > 0) {
+      factor *= numerator / denominator;
+    }
+  }
+  return factor;
+}
+
+function priorTradingClose(
+  rawSeries: Point[],
+  marketTime: number,
+  timeZone: string,
+  splitEvents?: Record<string, SplitEvent>,
+) {
+  if (rawSeries.length < 2 || !Number.isFinite(marketTime)) return null;
+
+  const lastIndex = rawSeries.length - 1;
+  const latestBarIsCurrentSession = dateKey(rawSeries[lastIndex].t, timeZone) === dateKey(marketTime, timeZone);
+  const priorIndex = latestBarIsCurrentSession ? lastIndex - 1 : lastIndex;
+  if (priorIndex < 0) return null;
+
+  const prior = rawSeries[priorIndex];
+  const splitFactor = splitFactorBetween(splitEvents, prior.t, marketTime);
+  const comparableClose = splitFactor > 0 ? prior.v / splitFactor : prior.v;
+  return Number.isFinite(comparableClose) && comparableClose > 0 ? comparableClose : null;
+}
+
 async function loadChart(symbol: string) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1y&interval=1d&events=div%2Csplits`;
   const response = await fetch(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "Mozilla/5.0 (compatible; MarketAgentPOC/1.1)",
+      "User-Agent": "Mozilla/5.0 (compatible; MarketAgentPOC/1.2)",
     },
   });
   if (!response.ok) throw new Error(`Market data ${response.status}`);
@@ -71,24 +131,29 @@ async function loadChart(symbol: string) {
   if (!result) throw new Error("No chart result");
 
   const timestamps: number[] = result.timestamp ?? [];
-  const closes: Array<number | null> = result.indicators?.adjclose?.[0]?.adjclose
-    ?? result.indicators?.quote?.[0]?.close
-    ?? [];
-  const series = timestamps
-    .map((t, index) => ({ t, v: closes[index] }))
-    .filter((point): point is Point => Number.isFinite(point.v));
-  const values = series.map((point) => point.v);
+  const rawCloses: Array<number | null> = result.indicators?.quote?.[0]?.close ?? [];
+  const adjustedCloses: Array<number | null> = result.indicators?.adjclose?.[0]?.adjclose ?? rawCloses;
+  const rawSeries = toSeries(timestamps, rawCloses);
+  const adjustedSeries = toSeries(timestamps, adjustedCloses);
+  const values = adjustedSeries.map((point) => point.v);
   const meta = result.meta ?? {};
-  const price = Number(meta.regularMarketPrice ?? values.at(-1));
-  const previousClose = Number(meta.previousClose ?? meta.chartPreviousClose ?? values.at(-2));
+  const marketTime = Number(meta.regularMarketTime ?? rawSeries.at(-1)?.t);
+  const timeZone = meta.exchangeTimezoneName ?? "UTC";
+  const price = Number(meta.regularMarketPrice ?? rawSeries.at(-1)?.v);
+  let previousClose = priorTradingClose(rawSeries, marketTime, timeZone, result.events?.splits);
+
+  // A move above 50% without a clean split adjustment is treated as invalid rather than displayed.
+  if (Number.isFinite(price) && previousClose && Math.abs(price / previousClose - 1) > 0.5) {
+    previousClose = null;
+  }
 
   return {
     price: Number.isFinite(price) ? price : null,
-    previousClose: Number.isFinite(previousClose) ? previousClose : null,
+    previousClose,
     currency: meta.currency ?? null,
     exchangeName: meta.exchangeName ?? null,
     marketState: meta.marketState ?? null,
-    asOf: meta.regularMarketTime ? new Date(meta.regularMarketTime * 1000).toISOString() : new Date().toISOString(),
+    asOf: Number.isFinite(marketTime) ? new Date(marketTime * 1000).toISOString() : new Date().toISOString(),
     high52: values.length ? Math.max(...values) : null,
     low52: values.length ? Math.min(...values) : null,
     ma20: average(values, 20),
@@ -100,7 +165,7 @@ async function loadChart(symbol: string) {
     rsi14: rsi(values, 14),
     ma50Slope20: slopePercent(values, 50, 20),
     ma200Slope20: slopePercent(values, 200, 20),
-    series: compactSeries(series),
+    series: compactSeries(adjustedSeries),
   };
 }
 
