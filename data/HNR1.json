@@ -4,7 +4,7 @@
   "region": "EU",
   "kind": "Aktie",
   "currency": "EUR",
-  "fallback": 251.0,
+  "fallback": 252.0,
   "pillars": {
     "fundamental": 26,
     "valuation": 14,
@@ -32,10 +32,11 @@
   "tailwinds": ["Solide Kapitalisierung und konservatives Schadenbudget schaffen Puffer gegen Großschäden und unterstützen die Ausschüttungsfähigkeit.","Disziplinierte Zeichnungspolitik und diversifiziertes Rückversicherungsportfolio stabilisieren die Ergebnisqualität über den Zyklus.","Höhere Anlageerträge liefern einen zweiten Ergebnishebel neben dem Underwriting und verbessern den laufenden Cash-Ertrag.","Das etablierte Dividendenprofil erhöht die Attraktivität für einkommensorientierte Anleger und kann Kursrückgänge abfedern."],
   "risks": ["Nachlassende Preise bei Vertragserneuerungen können Margen und Gewinnwachstum schneller normalisieren als vom Markt erwartet.","Naturkatastrophen, Großschäden und Schadeninflation können Quartalsergebnisse trotz guter Jahresplanung stark verzerren.","Reserveverstärkungen in älteren Schadenjahren wären ein Warnsignal für die bisher hohe Ergebnisqualität.","Eine hohe Bewertung relativ zum eigenen Zyklus reduziert die Sicherheitsmarge und macht die Aktie anfälliger für kleine Enttäuschungen."],
   "analysts": [
-    {"house":"Zacks","date":"2026-06-22","rating":"Strong Sell","target":null,"reason":"Downgrade des US-ADR-Proxys; kurzfristige Ergebnis-/Bewertungsrisiken im Fokus.","quality":"Öffentlicher Rang: n. v.","source":"https://www.marketbeat.com/stocks/OTCMKTS/HVRRY/forecast/"},
-    {"house":"Berenberg","date":"2026-05-05","rating":"Strong Buy","target":null,"reason":"Upgrade des US-ADR-Proxys; Qualität und Ertragskraft wurden positiv gewichtet.","quality":"Haus-Rang 2/5","source":"https://www.marketbeat.com/stocks/OTCMKTS/HVRRY/forecast/"}
+    {"house":"JPMorgan","date":"2026-07-16","rating":"Neutral","target":270,"reason":"Kursziel vor den Halbjahreszahlen von 275 auf 270 EUR gesenkt. Erwartet wird ein Rückgang der P&C-Rückversicherungserlöse im zweiten Quartal; Gewinnschätzungen 2026–2028 wurden im Mittel um 2 % reduziert.","quality":"Historische Güte: n. v.","source":"https://www.finanznachrichten.de/nachrichten-2026-07/69050561-jpmorgan-stuft-hannover-rueckversicherung-ag-auf-neutral-322.htm"},
+    {"house":"Berenberg","date":"2026-07-15","rating":"Buy","target":330,"reason":"Rating und Kursziel bestätigt. Als zusätzlicher Sektorimpuls wird ein möglicher Mittelzufluss durch die deutsche Rentenreform genannt.","quality":"Historische Güte: n. v.","source":"https://www.finanzen.net/analyse/hannover_rueck_buy-joh_berenberg_gossler__co_kg_berenberg_bank__1091628"},
+    {"house":"Jefferies","date":"2026-07-13","rating":"Buy","target":360,"reason":"Rating und Kursziel vor den Halbjahreszahlen bestätigt; vollständige frei zugängliche Begründung nicht verfügbar.","quality":"Historische Güte: n. v.","source":"https://www.t-online.de/finanzen/boerse/boerse-analysen/de0008402215/aktuelle-analysen-und-marktberichte-zur-hannover-rueck-aktie/"}
   ],
-  "analystNote": "Kostenfrei verifizierbare Einzelratings beziehen sich hier auf den US-ADR/OTC-Proxy HVRRY. Sie sind ein Sentimentindikator, kein 1:1-Kursziel für Xetra.",
+  "analystNote": "Aktualisiert bis 16.07.2026. Verwendet wurden dpa-AFX/FinanzNachrichten, finanzen.net und eine aggregierte Analyseübersicht; die IR-Seite bestätigt die institutionelle Analystenabdeckung. Öffentliche belastbare Trefferquoten einzelner Analysten waren nicht verfügbar.",
   "insiders": [],
   "insiderNote": "Im geprüften Vier-Monats-Fenster wurde keine verifizierte meldepflichtige Directors’-Dealings-Transaktion gefunden. Das bedeutet nicht, dass keine sonstigen Vergütungsvorgänge existierten.",
   "insiderSource": "https://portal.mvp.bafin.de/database/DealingsInfo/"
