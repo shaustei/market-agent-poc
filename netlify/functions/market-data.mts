@@ -5,6 +5,8 @@ const SYMBOLS: Record<string, string> = {
   JBL: "JBL",
   LMT: "LMT",
   LHA: "LHA.DE",
+  MCD: "MCD",
+  ALV: "ALV.DE",
 };
 
 const FALLBACK: Record<string, { price: number | null; currency: string; previousClose: number | null; asOf: string }> = {
@@ -14,6 +16,8 @@ const FALLBACK: Record<string, { price: number | null; currency: string; previou
   JBL: { price: 326.82, currency: "USD", previousClose: 321.96, asOf: "2026-07-14T16:00:00-04:00" },
   LMT: { price: 514.99, currency: "USD", previousClose: 520.66, asOf: "2026-07-14T16:00:00-04:00" },
   LHA: { price: 8.11, currency: "EUR", previousClose: null, asOf: "2026-07-15T10:00:00+02:00" },
+  MCD: { price: 267.74, currency: "USD", previousClose: 273.46, asOf: "2026-07-17T16:00:00-04:00" },
+  ALV: { price: 424.00, currency: "EUR", previousClose: 422.90, asOf: "2026-07-20T12:00:00+02:00" },
 };
 
 type Point = { t: number; v: number };
