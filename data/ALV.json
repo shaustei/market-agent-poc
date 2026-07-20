@@ -1,0 +1,52 @@
+{
+  "id": "ALV",
+  "name": "Allianz",
+  "region": "EU",
+  "kind": "Aktie",
+  "currency": "EUR",
+  "fallback": 424.0,
+  "pillars": {
+    "fundamental": 27,
+    "valuation": 8,
+    "news": 12,
+    "income": 10,
+    "technicalFallback": 15
+  },
+  "thesis": "Global diversifizierter Versicherer und Asset Manager mit hoher Kapitalstärke, belastbarer Ertragsbasis und klarer Ausschüttungspolitik. Der Investmentcase wird von operativem Wachstum, Dividende und Rückkäufen getragen; die Nähe zum 52-Wochen-Hoch reduziert jedoch die kurzfristige Sicherheitsmarge.",
+  "advice": "Halten; Rücksetzer für gestaffelte Käufe nutzen.",
+  "adviceWhy": "Fundamentale Qualität, Solvency-II-Quote und Ausschüttungen sind stark. Nach dem deutlichen Kursanstieg sollte ein Zukauf eher gestaffelt als prozyklisch erfolgen.",
+  "dividend": "Sehr positiv. Allianz kombiniert eine etablierte Dividendenpolitik mit laufenden Aktienrückkäufen; Naturkatastrophen, Kapitalmarktstress und regulatorische Kapitalanforderungen bleiben die wichtigsten Ausschüttungsrisiken.",
+  "next": "07.08.2026 · Q2-Ergebnisse 07:00 / Call 14:30",
+  "triggers": [
+    {"date":"2026-11-12","title":"Ergebnisse 3Q 2026","background":"Operatives Ergebnis, Schaden-Kosten-Quote, Asset-Management-Flows und Solvency-II-Quote werden neu bewertet.","direction":"neutral","criteria":[1,1,0],"source":"https://www.allianz.com/de/investor_relations/konferenzen-praesentationen/finanzkalender.html","sourceName":"Allianz IR","status":"bestätigt"},
+    {"date":"2026-09-23","title":"Bank of America Financial CEO Conference","background":"Managementaussagen zu Pricing, Kapitalallokation und Asset Management können Analystenschätzungen beeinflussen; kein regulärer Ergebnisbericht.","direction":"neutral","criteria":[0,1,1],"source":"https://www.allianz.com/de/investor_relations/konferenzen-praesentationen/finanzkalender.html","sourceName":"Allianz IR","status":"bestätigt"},
+    {"date":"2026-08-07","title":"Ergebnisse 2Q 2026 und Halbjahresbericht","background":"Veröffentlichung um 07:00 Uhr CEST; Analystenkonferenz um 14:30 Uhr. Fokus auf operatives Ergebnis, Combined Ratio, Nettomittelzuflüsse, Solvency II und Fortschritt des Rückkaufprogramms.","direction":"neutral","criteria":[1,1,1],"source":"https://www.allianz.com/de/investor_relations/ergebnisse-berichte/ergebnisse.html","sourceName":"Allianz IR","status":"bestätigt"}
+  ],
+  "news": [
+    {"date":"2026-07-13","sourceName":"Allianz","category":"Strategie / KI","title":"Allianz konkretisiert den verantwortungsvollen KI-Einsatz im Kundengeschäft","summary":"Der Konzern beschreibt KI als Hebel für Service, Mitarbeiterproduktivität und Risikoprävention. Für den Investmentcase ist entscheidend, ob Effizienzgewinne sichtbar werden, ohne regulatorische oder Reputationsrisiken zu erhöhen.","impactText":"Leicht positiv strategisch; kurzfristig noch kein quantifizierter Ergebnisbeitrag.","impact":1,"source":"https://www.allianz.com/de/mediencenter/news.html"},
+    {"date":"2026-07-03","sourceName":"Allianz IR","category":"Kapitalallokation","title":"Rückkaufprogramm erreicht rund 1,5 Mrd. EUR Volumen","summary":"Bis Anfang Juli wurden rund 3,95 Mio. Aktien für knapp 1,5 Mrd. EUR zurückgekauft. Das Programm umfasst bis zu 2,5 Mrd. EUR und soll spätestens Ende 2026 abgeschlossen werden; die Aktien werden eingezogen.","impactText":"Positiv für Gewinn je Aktie und Kapitaldisziplin; bei Kursen nahe Rekordniveau sinkt die Effizienz jedes zusätzlichen Rückkauf-Euro.","impact":2,"source":"https://www.allianz.com/de/investor_relations/aktie/aktienrueckkauf.html"},
+    {"date":"2026-05-13","sourceName":"Allianz IR","category":"Q1-Ergebnis","title":"Rekord beim operativen Ergebnis und Solvency-II-Quote von 221 %","summary":"Das operative Ergebnis stieg um 6,6 % auf 4,5 Mrd. EUR. Das bereinigte Wachstum des Kernergebnisses blieb stark; Schaden/Unfall und Asset Management trugen zur breiten Ergebnisbasis bei.","impactText":"Klar positiv für Qualität, Kapitalstärke und Ausschüttungsfähigkeit; die hohe Erwartungsbasis erhöht zugleich das Enttäuschungsrisiko für Q2.","impact":3,"source":"https://www.allianz.com/en/mediacenter/news/media-releases/financials/260513-1q-2026-earnings-release.result.html/1"}
+  ],
+  "tailwinds": [
+    "Die Kombination aus Schaden/Unfall, Leben/Kranken und Asset Management diversifiziert Ergebnisquellen und reduziert die Abhängigkeit von einem einzelnen Versicherungszyklus.",
+    "Eine Solvency-II-Quote von 221 % schafft Puffer für Dividenden, Rückkäufe, Wachstum und unerwartete Großschäden.",
+    "Das Rückkaufprogramm von bis zu 2,5 Mrd. EUR unterstützt den Gewinn je Aktie und signalisiert Kapitaldisziplin.",
+    "PIMCO und Allianz Global Investors bieten bei stabilen oder steigenden Nettomittelzuflüssen zusätzlichen Ergebnishebel über wiederkehrende Gebühren."
+  ],
+  "risks": [
+    "Der Kurs liegt nahe dem 52-Wochen-Hoch; dadurch ist die Sicherheitsmarge geringer und kleine Ergebnisenttäuschungen können überproportional wirken.",
+    "Naturkatastrophen, Schadeninflation und Reservestärkungen können die Combined Ratio und das Quartalsergebnis deutlich belasten.",
+    "Kapitalmarktvolatilität und Abflüsse bei PIMCO oder AllianzGI würden Gebühreneinnahmen und Ergebnisqualität im Asset Management schwächen.",
+    "Regulatorische Änderungen, niedrigere Reinvestitionsrenditen oder Stress im Lebensversicherungsgeschäft können Kapitalbindung und Ausschüttungen begrenzen."
+  ],
+  "analysts": [
+    {"house":"Berenberg","date":"2026-07-15","rating":"Buy","target":684,"reason":"Kursziel und Buy bestätigt. Die deutsche Rentenreform könnte dem Lebensversicherungsgeschäft und den Kapitalmarktflüssen zugutekommen; Allianz bleibt ein bevorzugter Sektorwert.","quality":"Historische Güte: n. v.","source":"https://www.finanznachrichten.de/nachrichten-2026-07/69028746-berenberg-stuft-allianz-se-auf-buy-322.htm"},
+    {"house":"Jefferies","date":"2026-07-13","rating":"Hold","target":325,"reason":"Hold und Kursziel bestätigt. Nach der starken Sektorperformance sieht Jefferies wenig Veränderung bei den Markterwartungen und begrenzte zusätzliche Bewertungsfantasie.","quality":"Historische Güte: n. v.","source":"https://www.finanznachrichten.de/nachrichten-2026-07/69006233-jefferies-stuft-allianz-se-auf-hold-322.htm"},
+    {"house":"Barclays","date":"2026-05-26","rating":"n. v.","target":350,"reason":"Aktuelles Kursziel aus der frei zugänglichen Analyseübersicht; vollständige Originalbegründung war nicht frei verfügbar.","quality":"Historische Güte: n. v.","source":"https://www.finanznachrichten.de/aktien-analysen/allianz-se.htm"},
+    {"house":"UBS","date":"2026-05-13","rating":"n. v.","target":390,"reason":"Kursziel aus der frei zugänglichen Analyseübersicht rund um die Q1-Zahlen; vollständige Originalbegründung war nicht frei verfügbar.","quality":"Historische Güte: n. v.","source":"https://www.finanznachrichten.de/aktien-analysen/allianz-se.htm"}
+  ],
+  "analystNote": "Rollierendes Vier-Monats-Fenster, Stand 20.07.2026. Einzelmeldungen wurden über dpa-AFX/FinanzNachrichten verifiziert; die Übersicht wurde zur Vollständigkeitskontrolle genutzt. Die große Spanne der Kursziele zeigt unterschiedliche Bewertungsannahmen und ist kein einheitlicher Fair-Value-Korridor.",
+  "insiders": [],
+  "insiderNote": "Die offizielle Allianz-Directors’-Dealings-Seite, EQS-Hinweise und die BaFin-Datenquelle wurden geprüft. Im rollierenden Vier-Monats-Fenster wurde keine klar verifizierte discretionary Open-Market-Transaktion gefunden. Pflichtumwandlungen aus Vergütungsbestandteilen sind kein gleichwertiges Kaufsignal.",
+  "insiderSource": "https://www.allianz.com/de/investor_relations/mitteilungen/directors-dealings.html"
+}
