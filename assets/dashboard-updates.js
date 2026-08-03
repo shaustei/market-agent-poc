@@ -1,8 +1,8 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-03T10:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-03T10:00:00+02:00';
-  const RUN_STATUS = 'partial';
-  const EU_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
+  const CONTENT_UPDATED_AT = '2026-08-03T17:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-03T17:00:00+02:00';
+  const RUN_STATUS = 'ok';
+  const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);
 
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
     timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric',
@@ -16,12 +16,12 @@
     text.textContent = `Inhalte: ${formatStamp(CONTENT_UPDATED_AT)}`;
     chip.classList.remove('status-ok','status-partial','status-error','status-closed');
     chip.classList.add(RUN_STATUS === 'ok' ? 'status-ok' : RUN_STATUS === 'partial' ? 'status-partial' : RUN_STATUS === 'closed' ? 'status-closed' : 'status-error');
-    chip.title = RUN_STATUS === 'partial' ? 'Teilweise aktualisiert: Amazon wurde neu aufgenommen; vollständige US-Erstprüfung folgt im US-Lauf.' : 'Letzter erfolgreich veröffentlichter Inhaltsstand';
+    chip.title = 'Letzter erfolgreich veröffentlichter Inhaltsstand';
   }
 
   function enrichMetadata() {
     holdings.forEach(h => {
-      if (EU_IDS.has(h.id)) {
+      if (CHECKED_IDS.has(h.id)) {
         h.lastCheckedAt ||= LAST_SUCCESSFUL_RUN_AT;
         h.lastChangedAt ||= null;
         h.changedSections ||= [];
@@ -76,7 +76,6 @@
     setContentChip();
     for (let i = 0; i < 80 && (!Array.isArray(holdings) || holdings.length === 0); i++) await new Promise(r => setTimeout(r, 50));
     installWrappers();
-    await addAmazon();
     enrichMetadata();
     renderCards();
     renderDetail();

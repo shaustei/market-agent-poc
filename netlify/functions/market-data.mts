@@ -7,6 +7,7 @@ const SYMBOLS: Record<string, string> = {
   LHA: "LHA.DE",
   MCD: "MCD",
   ALV: "ALV.DE",
+  AMZN: "AMZN",
 };
 
 const FALLBACK: Record<string, { price: number | null; currency: string; previousClose: number | null; asOf: string }> = {
@@ -18,6 +19,7 @@ const FALLBACK: Record<string, { price: number | null; currency: string; previou
   LHA: { price: 8.11, currency: "EUR", previousClose: null, asOf: "2026-07-15T10:00:00+02:00" },
   MCD: { price: 267.74, currency: "USD", previousClose: 273.46, asOf: "2026-07-17T16:00:00-04:00" },
   ALV: { price: 424.00, currency: "EUR", previousClose: 422.90, asOf: "2026-07-20T12:00:00+02:00" },
+  AMZN: { price: null, currency: "USD", previousClose: null, asOf: "2026-08-03T17:00:00+02:00" },
 };
 
 type Point = { t: number; v: number };
