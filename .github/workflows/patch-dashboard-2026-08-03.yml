@@ -1,0 +1,77 @@
+name: Patch holdings dashboard 2026-08-03
+on:
+  push:
+    paths:
+      - '.github/workflows/patch-dashboard-2026-08-03.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply verified holdings and update-state patch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          p = Path('assets/dashboard.js')
+          s = p.read_text()
+          old = "['HNR1','EUNL','CAT','JBL','LMT','LHA','MCD','ALV']"
+          new = "['HNR1','EUNL','CAT','JBL','LMT','LHA','MCD','ALV','AMZN']"
+          if old not in s:
+              raise SystemExit('dashboard ID list pattern missing')
+          p.write_text(s.replace(old, new, 1))
+
+          p = Path('netlify/functions/market-data.mts')
+          s = p.read_text()
+          old = '  ALV: "ALV.DE",\n};'
+          new = '  ALV: "ALV.DE",\n  AMZN: "AMZN",\n};'
+          if old not in s:
+              raise SystemExit('SYMBOLS pattern missing')
+          s = s.replace(old, new, 1)
+          old = '  ALV: { price: 424.00, currency: "EUR", previousClose: 422.90, asOf: "2026-07-20T12:00:00+02:00" },\n};'
+          new = '  ALV: { price: 424.00, currency: "EUR", previousClose: 422.90, asOf: "2026-07-20T12:00:00+02:00" },\n  AMZN: { price: null, currency: "USD", previousClose: null, asOf: "2026-08-03T17:00:00+02:00" },\n};'
+          if old not in s:
+              raise SystemExit('FALLBACK pattern missing')
+          p.write_text(s.replace(old, new, 1))
+
+          p = Path('assets/dashboard-updates.js')
+          s = p.read_text()
+          s = s.replace("const CONTENT_UPDATED_AT = '2026-08-03T10:00:00+02:00';", "const CONTENT_UPDATED_AT = '2026-08-03T17:00:00+02:00';")
+          s = s.replace("const LAST_SUCCESSFUL_RUN_AT = '2026-08-03T10:00:00+02:00';", "const LAST_SUCCESSFUL_RUN_AT = '2026-08-03T17:00:00+02:00';")
+          s = s.replace("const RUN_STATUS = 'partial';", "const RUN_STATUS = 'ok';")
+          s = s.replace("const EU_IDS = new Set(['HNR1','EUNL','LHA','ALV']);", "const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);")
+          s = s.replace('if (EU_IDS.has(h.id)) {', 'if (CHECKED_IDS.has(h.id)) {')
+          s = s.replace("chip.title = RUN_STATUS === 'partial' ? 'Teilweise aktualisiert: Amazon wurde neu aufgenommen; vollständige US-Erstprüfung folgt im US-Lauf.' : 'Letzter erfolgreich veröffentlichter Inhaltsstand';", "chip.title = 'Letzter erfolgreich veröffentlichter Inhaltsstand';")
+          s = s.replace('    await addAmazon();\n', '')
+          p.write_text(s)
+
+          for ticker in ['CAT','JBL','LMT','MCD']:
+              p = Path(f'data/{ticker}.json')
+              d = json.loads(p.read_text())
+              d['lastCheckedAt'] = '2026-08-03T17:00:00+02:00'
+              d.setdefault('lastChangedAt', None)
+              d['changedSections'] = []
+              d['updateStatus'] = 'checked'
+              d.pop('updateTag', None)
+              p.write_text(json.dumps(d, ensure_ascii=False, separators=(',',':')))
+
+          p = Path('dashboard.html')
+          s = p.read_text().replace('Datenstand 03.08.2026', 'Datenstand 03.08.2026 · 17:00')
+          p.write_text(s)
+          PY
+      - name: Verify invariants
+        run: |
+          grep -q "'AMZN'" assets/dashboard.js
+          grep -q 'AMZN: "AMZN"' netlify/functions/market-data.mts
+          test "$(ls data/*.json | wc -l)" -ge 9
+          git diff --check
+      - name: Commit patch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add assets/dashboard.js assets/dashboard-updates.js netlify/functions/market-data.mts dashboard.html data/CAT.json data/JBL.json data/LMT.json data/MCD.json
+          git commit -m "Integrate Amazon and complete US dashboard run"
+          git push
