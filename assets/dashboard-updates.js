@@ -1,8 +1,8 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-03T17:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-03T17:00:00+02:00';
+  const CONTENT_UPDATED_AT = '2026-08-04T10:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-04T10:00:00+02:00';
   const RUN_STATUS = 'ok';
-  const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);
+  const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
 
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
     timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric',
@@ -17,6 +17,36 @@
     chip.classList.remove('status-ok','status-partial','status-error','status-closed');
     chip.classList.add(RUN_STATUS === 'ok' ? 'status-ok' : RUN_STATUS === 'partial' ? 'status-partial' : RUN_STATUS === 'closed' ? 'status-closed' : 'status-error');
     chip.title = 'Letzter erfolgreich veröffentlichter Inhaltsstand';
+  }
+
+  function applyEuUpdate() {
+    const lha = holdings.find(h => h.id === 'LHA');
+    if (lha) {
+      lha.next = '03.11.2026 · 3. Zwischenbericht';
+      lha.advice = 'Halten; wegen gesenkter Ergebnisvisibilität nicht aufstocken.';
+      lha.adviceWhy = 'Q2-EBIT und Nettogewinn brachen ein; die frühere qualitative Jahresprognose wurde durch eine Bandbreite von 1,7–2,2 Mrd. EUR ersetzt. Höhere Yields und Auslastung helfen, kompensieren Treibstoff- und Störkosten aber nicht vollständig.';
+      lha.thesis = 'Turnaround-Potenzial und wertvolle Cargo-/MRO-Aktivitäten stehen hohen Treibstoff-, Personal- und Ausführungsrisiken gegenüber. Nach dem deutlichen Q2-Ergebnisrückgang und der schwächeren Guidance-Visibilität bleibt die Aktie ein zyklisches Value-/Turnaround-Investment, kein verlässlicher Qualitäts-Dividendenwert.';
+      lha.triggers = [
+        {date:'2026-11-03',title:'3. Zwischenbericht 2026',background:'Entscheidend sind die Positionierung innerhalb der neuen EBIT-Bandbreite von 1,7–2,2 Mrd. EUR, Treibstoffkosten, Yield, Kapazität und Free Cashflow.',direction:'neutral',criteria:[1,1,0],source:'https://investor-relations.lufthansagroup.com/en/investor-relations',sourceName:'Lufthansa IR',status:'bestätigt'},
+        {date:'2026-08-04',title:'Analystenkonferenz zu H1 2026',background:'Management erläutert ab 11:30 Uhr die Halbjahreszahlen, die neue EBIT-Bandbreite, Treibstoffkosten und Kapazitätsmaßnahmen.',direction:'down',criteria:[1,1,1],source:'https://investor-relations.lufthansagroup.com/en/financial-reports-publications/financial-reports.html',sourceName:'Lufthansa IR',status:'heute'}
+      ].concat((lha.triggers || []).filter(t => t.date !== '2026-08-04'));
+      lha.news = [{
+        date:'2026-08-04',sourceName:'Lufthansa IR / Reuters',category:'Q2-Ergebnis / Guidance',
+        title:'Q2-Ergebnis bricht ein; Lufthansa ersetzt Gewinnziel durch Bandbreite',
+        summary:'Der Q2-Umsatz stieg auf 11,14 Mrd. EUR. Das bereinigte EBIT fiel von rund 870 Mio. EUR auf 383 Mio. EUR; der Nettogewinn sank auf 123 Mio. EUR. Für 2026 erwartet Lufthansa nun ein bereinigtes EBIT von 1,7 bis 2,2 Mrd. EUR statt eines Ergebnisses deutlich über dem Vorjahreswert von 1,96 Mrd. EUR.',
+        impactText:'Klar negativ; Stärke 3, weil Profitabilität und Ergebnisvisibilität deutlich nachlassen. Höhere Auslastung und Yields konnten Treibstoff- und Störkosten nicht ausgleichen.',impact:-3,
+        source:'https://investor-relations.lufthansagroup.com/en/financial-reports-publications/financial-reports.html'
+      }].concat((lha.news || []).filter(n => n.date !== '2026-08-04'));
+      lha.risks = [
+        'Die neue EBIT-Bandbreite von 1,7–2,2 Mrd. EUR schließt einen Gewinnrückgang gegenüber 2025 ein und signalisiert deutlich geringere Ergebnisvisibilität.',
+        ...(lha.risks || []).filter(r => !r.startsWith('Jet-Fuel-Preise'))
+      ];
+      lha.lastCheckedAt = LAST_SUCCESSFUL_RUN_AT;
+      lha.lastChangedAt = CONTENT_UPDATED_AT;
+      lha.changedSections = ['Termin/Trigger','News','Investment-Einordnung','Rückenwind/Risiken'];
+      lha.updateStatus = 'updated';
+      lha.updateTag = 'AKTUALISIERT';
+    }
   }
 
   function enrichMetadata() {
@@ -62,19 +92,10 @@
     renderDetail = function(){ baseDetail(); markDetail(); };
   }
 
-  async function addAmazon() {
-    if (holdings.some(h => h.id === 'AMZN')) return;
-    const response = await fetch('/data/AMZN.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('Amazon holding data unavailable');
-    holdings.push(await response.json());
-    quotes.AMZN ||= { price: null, currency: 'USD', source: 'fallback', series: [] };
-    const all = document.querySelector('[data-filter="ALL"]');
-    if (all) all.textContent = `Alle ${holdings.length}`;
-  }
-
   async function boot() {
     setContentChip();
     for (let i = 0; i < 80 && (!Array.isArray(holdings) || holdings.length === 0); i++) await new Promise(r => setTimeout(r, 50));
+    applyEuUpdate();
     installWrappers();
     enrichMetadata();
     renderCards();
