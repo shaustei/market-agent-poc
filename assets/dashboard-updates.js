@@ -1,9 +1,9 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-05T10:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-05T10:00:00+02:00';
+  const CONTENT_UPDATED_AT = '2026-08-05T17:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-05T17:00:00+02:00';
   const US_UPDATE_AT = '2026-08-04T17:00:00+02:00';
   const RUN_STATUS = 'ok';
-  const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
+  const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);
 
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
     timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric',
