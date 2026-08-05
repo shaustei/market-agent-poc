@@ -1,8 +1,9 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-04T17:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-04T17:00:00+02:00';
+  const CONTENT_UPDATED_AT = '2026-08-05T10:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-05T10:00:00+02:00';
+  const US_UPDATE_AT = '2026-08-04T17:00:00+02:00';
   const RUN_STATUS = 'ok';
-  const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);
+  const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
 
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
     timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric',
@@ -50,8 +51,8 @@
         'Der zweistellige Kurssprung nach Q2 erhöht die Fallhöhe; weitere Kursgewinne setzen anhaltende Gewinnrevisionen und hohe Backlog-Umsetzung voraus.',
         ...(cat.risks || []).filter(v => !v.startsWith('Die anspruchsvolle Bewertung'))
       ];
-      cat.lastCheckedAt = LAST_SUCCESSFUL_RUN_AT;
-      cat.lastChangedAt = CONTENT_UPDATED_AT;
+      cat.lastCheckedAt = US_UPDATE_AT;
+      cat.lastChangedAt = US_UPDATE_AT;
       cat.changedSections = ['Termin/Trigger','News','Investment-Einordnung','Rückenwind/Risiken'];
       cat.updateStatus = 'updated';
       cat.updateTag = 'AKTUALISIERT';
@@ -85,8 +86,8 @@
         'US-Comparable-Sales von nur 0,8 % und rückläufige Besuche einkommensschwächerer Kunden zeigen kurzfristig begrenzte Preissetzung und schwache Value-Ausführung.',
         ...(mcd.risks || []).filter(v => !v.startsWith('Preissensible und einkommensschwächere Kunden'))
       ];
-      mcd.lastCheckedAt = LAST_SUCCESSFUL_RUN_AT;
-      mcd.lastChangedAt = CONTENT_UPDATED_AT;
+      mcd.lastCheckedAt = US_UPDATE_AT;
+      mcd.lastChangedAt = US_UPDATE_AT;
       mcd.changedSections = ['Termin/Trigger','News','Analysten','Investment-Einordnung','Rückenwind/Risiken'];
       mcd.updateStatus = 'updated';
       mcd.updateTag = 'AKTUALISIERT';
@@ -96,10 +97,11 @@
   function enrichMetadata() {
     holdings.forEach(h => {
       if (CHECKED_IDS.has(h.id)) {
-        h.lastCheckedAt = h.lastCheckedAt || LAST_SUCCESSFUL_RUN_AT;
+        h.lastCheckedAt = LAST_SUCCESSFUL_RUN_AT;
         h.lastChangedAt = h.lastChangedAt || null;
-        h.changedSections = h.changedSections || [];
-        h.updateStatus = h.updateStatus || 'checked';
+        h.changedSections = [];
+        h.updateStatus = 'checked';
+        delete h.updateTag;
       }
     });
   }
