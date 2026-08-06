@@ -1,9 +1,9 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-05T17:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-05T17:00:00+02:00';
+  const CONTENT_UPDATED_AT = '2026-08-06T10:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-06T10:00:00+02:00';
   const US_UPDATE_AT = '2026-08-04T17:00:00+02:00';
   const RUN_STATUS = 'ok';
-  const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);
+  const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
 
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
     timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric',
@@ -123,7 +123,7 @@
 
   function markDetail() {
     const h = holdings.find(x => x.id === selected);
-    if (!h?.updateTag) return;
+    if (!h?.updateTag || h?.lastChangedAt?.slice(0,10) !== CONTENT_UPDATED_AT.slice(0,10)) return;
     const thesis = document.querySelector('#tab-overview .thesis');
     if (thesis && !thesis.querySelector('.update-badge')) thesis.insertAdjacentHTML('afterbegin', badge(h.updateTag) + ' ');
     if (h.changedSections?.includes('Termin/Trigger')) {
