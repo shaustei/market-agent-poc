@@ -1,9 +1,10 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-06T17:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-06T17:00:00+02:00';
+  const CONTENT_UPDATED_AT = '2026-08-07T10:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-07T10:00:00+02:00';
+  const EU_UPDATE_AT = '2026-08-07T10:00:00+02:00';
   const US_UPDATE_AT = '2026-08-04T17:00:00+02:00';
   const RUN_STATUS = 'ok';
-  const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);
+  const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
 
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
     timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric',
@@ -22,6 +23,47 @@
 
   function upsertByDate(items, entry) {
     return [entry].concat((items || []).filter(item => !(item.date === entry.date && item.title === entry.title)));
+  }
+
+  function applyEuUpdate() {
+    const alv = holdings.find(h => h.id === 'ALV');
+    if (alv) {
+      alv.next = '12.11.2026 · Q3-Ergebnisse';
+      alv.advice = 'Halten / selektiv zukaufen; operative Stärke bestätigt, Bewertung beachten.';
+      alv.adviceWhy = 'Q2 brachte ein Rekord-Operativresultat, starke Kapitalisierung und Rekordzuflüsse im Asset Management. Der Rückgang des berichteten Nettoergebnisses beruht vor allem auf Restrukturierungsaufwendungen; die Jahresprognose bleibt bestätigt. Nach der starken Kursentwicklung bleibt die Bewertung der wichtigste kurzfristige Gegenpunkt.';
+      alv.thesis = 'Global diversifizierter Versicherer und Asset Manager mit hoher Kapitalstärke, belastbarer Ertragsbasis und klarer Ausschüttungspolitik. Q2 2026 bestätigt den Investmentcase mit Rekord-Operativgewinn, 225 % Solvency-II-Quote und starken Asset-Management-Zuflüssen; Restrukturierungskosten drücken jedoch das berichtete Nettoergebnis.';
+      alv.triggers = upsertByDate(alv.triggers, {
+        date:'2026-08-07', title:'Q2 2026: Rekord-Operativgewinn, Jahresausblick bestätigt',
+        background:'Operativer Gewinn 4,874 Mrd. EUR (+10,6 %), Gesamtgeschäftsvolumen 45,6 Mrd. EUR und Solvency-II-Quote 225 %. Das berichtete Aktionärs-Nettoergebnis sank auf 2,595 Mrd. EUR; Restrukturierungsaufwendungen belasteten. Der operative Gewinn-Ausblick von 17,4 Mrd. EUR ±1 Mrd. EUR bleibt bestätigt.',
+        direction:'up', criteria:[1,1,1], source:'https://www.allianz.com/content/dam/onemarketing/azcom/Allianz_com/press/document/results/2026-2q/2q-2026-earnings-release-allianz.pdf', sourceName:'Allianz IR', status:'veröffentlicht'
+      });
+      alv.news = upsertByDate(alv.news, {
+        date:'2026-08-07', sourceName:'Allianz IR', category:'Q2/H1-Ergebnis',
+        title:'Rekord-Operativgewinn und stärkere Kapitalquote; Nettoergebnis durch Restrukturierung belastet',
+        summary:'Allianz steigerte den operativen Gewinn im Q2 um 10,6 % auf einen Rekordwert von 4,874 Mrd. EUR. Das Gesamtgeschäftsvolumen lag bei 45,6 Mrd. EUR mit 5,7 % internem Wachstum. Die Solvency-II-Quote erreichte 225 %. Asset Management erzielte 39 Mrd. EUR Nettozuflüsse und 933 Mio. EUR operativen Gewinn. Das den Aktionären zurechenbare Nettoergebnis sank um 8,7 % auf 2,595 Mrd. EUR; Restrukturierungsaufwendungen belasteten das Ergebnis. Die Jahresprognose für den operativen Gewinn von 17,4 Mrd. EUR ±1 Mrd. EUR wurde bestätigt.',
+        impactText:'Positiv; Stärke 3. Operativer Rekordgewinn, Kapitalstärke und Rekordzuflüsse im Asset Management bestätigen die Ertragsqualität. Der Nettoergebnisrückgang ist ein Gegenpunkt, wirkt wegen der klar ausgewiesenen Restrukturierungseffekte aber weniger strukturell.', impact:3,
+        source:'https://www.allianz.com/content/dam/onemarketing/azcom/Allianz_com/press/document/results/2026-2q/2q-2026-earnings-release-allianz.pdf'
+      });
+      alv.tailwinds = [
+        'Q2 2026 erreichte mit 4,874 Mrd. EUR den höchsten operativen Quartalsgewinn; alle Segmente liegen über dem Halbjahres-Mittelpunkt ihrer Jahresziele.',
+        'Asset Management erzielte im Q2 39 Mrd. EUR Nettozuflüsse und erhöhte die Dritt-AuM auf den Rekordwert von 2,161 Bio. EUR.',
+        'Die Solvency-II-Quote stieg auf 225 % und schafft weiterhin hohen Puffer für Ausschüttungen, Wachstum und unerwartete Großschäden.',
+        'Die Übernahme von HSBC Life Singapore und die 15-jährige exklusive HSBC-Vertriebspartnerschaft erweitern Kundenreichweite und Wachstumspotenzial im asiatisch-pazifischen Raum.'
+      ];
+      alv.risks = [
+        'Restrukturierungsaufwendungen von 643 Mio. EUR belasteten das Q2-Nettoergebnis; entscheidend ist, ob die damit verbundenen IT-/AI-Investitionen künftig messbare Produktivitätsgewinne liefern.',
+        'Der Kurs liegt nahe dem 52-Wochen-Hoch; dadurch ist die Sicherheitsmarge geringer und kleine Ergebnisenttäuschungen können überproportional wirken.',
+        'Naturkatastrophen, Schadeninflation und Reservestärkungen können die Combined Ratio und das Quartalsergebnis deutlich belasten.',
+        'Kapitalmarktvolatilität und Abflüsse bei PIMCO oder AllianzGI würden Gebühreneinnahmen und Ergebnisqualität im Asset Management schwächen.'
+      ];
+      alv.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 07.08.2026 10:00 CEST. FinanzNachrichten/dpa-AFX, MarketScreener und frei zugängliche Analystenübersichten wurden nach neuen Einzelrevisionen durchsucht; bis zum Prüfzeitpunkt wurde noch keine belastbare neue Q2-Reaktion mit Rating und Kursziel verifiziert. Bestehende valide Einträge bleiben erhalten.';
+      alv.insiderNote = 'Offizielle Allianz-Directors’-Dealings-Seite und EQS wurden bis 07.08.2026 10:00 CEST geprüft. Im rollierenden Vier-Monats-Fenster wurde keine klar verifizierte discretionary Open-Market-Transaktion gefunden. Pflichtumwandlungen aus Vergütungsbestandteilen sind kein gleichwertiges Kaufsignal.';
+      alv.lastCheckedAt = EU_UPDATE_AT;
+      alv.lastChangedAt = EU_UPDATE_AT;
+      alv.changedSections = ['Termin/Trigger','News','Investment-Einordnung','Rückenwind/Risiken'];
+      alv.updateStatus = 'updated';
+      alv.updateTag = 'AKTUALISIERT';
+    }
   }
 
   function applyUsUpdate() {
@@ -96,9 +138,11 @@
 
   function enrichMetadata() {
     holdings.forEach(h => {
-      if (CHECKED_IDS.has(h.id)) {
-        h.lastCheckedAt = LAST_SUCCESSFUL_RUN_AT;
-        h.lastChangedAt = h.lastChangedAt || null;
+      if (!CHECKED_IDS.has(h.id)) return;
+      h.lastCheckedAt = LAST_SUCCESSFUL_RUN_AT;
+      h.lastChangedAt = h.lastChangedAt || null;
+      const changedThisRun = Boolean(h.changedSections?.length) && h.lastChangedAt?.slice(0,10) === CONTENT_UPDATED_AT.slice(0,10);
+      if (!changedThisRun) {
         h.changedSections = [];
         h.updateStatus = 'checked';
         delete h.updateTag;
@@ -151,6 +195,7 @@
     setContentChip();
     for (let i = 0; i < 80 && (!Array.isArray(holdings) || holdings.length === 0); i++) await new Promise(r => setTimeout(r, 50));
     applyUsUpdate();
+    applyEuUpdate();
     installWrappers();
     enrichMetadata();
     renderCards();
