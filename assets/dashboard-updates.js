@@ -79,6 +79,8 @@
         impactText:'Stark positiv; Stärke 3. Ergebnis, Segmentdynamik und Guidance bestätigen den strukturellen Power-/Data-Center-Case. Nach dem zweistelligen Kurssprung steigt jedoch das Bewertungs- und Erwartungsrisiko.', impact:3,
         source:'https://www.reuters.com/business/caterpillar-second-quarter-profit-jumps-strong-power-construction-equipment-2026-08-04/'
       });
+      cat.tailwinds = ['Q2-Rekordumsatz und der angehobene Jahresausblick bestätigen breite operative Dynamik in Construction sowie Power & Energy.', ...(cat.tailwinds || []).filter(v => !v.startsWith('Data-Center- und Stromerzeugungsinvestitionen'))];
+      cat.risks = ['Der zweistellige Kurssprung nach Q2 erhöht die Fallhöhe; weitere Kursgewinne setzen anhaltende Gewinnrevisionen und hohe Backlog-Umsetzung voraus.', ...(cat.risks || []).filter(v => !v.startsWith('Die anspruchsvolle Bewertung'))];
     }
 
     const mcd = holdings.find(h => h.id === 'MCD');
@@ -101,8 +103,12 @@
       });
       const ubs = {house:'UBS', date:'2026-07-27', rating:'Buy', target:340, reason:'Kursziel von 365 auf 340 USD gesenkt; Buy bestätigt. Makrodruck wird berücksichtigt, während Value-Angebote und Produktneuheiten Marktanteilspotenzial stützen.', quality:'Historische Güte: n. v.', source:'https://www.tipranks.com/stocks/mcd/forecast'};
       const btig = {house:'BTIG', date:'2026-07-24', rating:'Buy', target:350, reason:'Kursziel von 370 auf 350 USD gesenkt; Buy bestätigt. Value-Angebote, Produktinnovation und operative Effizienz stützen den langfristigen Case.', quality:'Historische Güte: n. v.', source:'https://www.marketbeat.com/instant-alerts/mcdonalds-nysemcd-price-target-lowered-to-35000-at-btig-research-2026-07-24/'};
-      mcd.analysts = [ubs,btig].concat((mcd.analysts || []).filter(a => !((a.house === 'UBS' && a.date === '2026-07-27') || (a.house === 'BTIG' && a.date === '2026-07-24'))));
+      mcd.analysts = [ubs,btig].concat((mcd.analysts || []).filter(a => !((a.house === 'UBS' && (a.date === '2026-07-27' || a.date === '2026-08-03')) || (a.house === 'BTIG' && a.date === '2026-07-24'))));
       mcd.risks = ['US-Comparable-Sales von nur 0,8 % und rückläufige Besuche einkommensschwächerer Kunden zeigen kurzfristig begrenzte Preissetzung und schwache Value-Ausführung.', ...(mcd.risks || []).filter(v => !v.startsWith('Preissensible und einkommensschwächere Kunden'))];
+      mcd.lastChangedAt = US_UPDATE_AT;
+      mcd.changedSections = ['Analysten'];
+      mcd.updateStatus = 'updated';
+      mcd.updateTag = 'KORRIGIERT';
     }
 
     const lmt = holdings.find(h => h.id === 'LMT');
