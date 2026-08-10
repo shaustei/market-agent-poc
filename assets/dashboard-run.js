@@ -3,7 +3,7 @@
   const LAST_SUCCESSFUL_RUN_AT = '2026-08-07T17:00:00+02:00';
   const RUN_STATUS = 'partial';
   const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
-  const CHANGED_IDS = new Set(['HNR1','ALV']);
+  const CHANGED_IDS = new Set(['HNR1','LHA','ALV']);
 
   window.marketAgentUpdateMeta = {
     contentUpdatedAt: CONTENT_UPDATED_AT,
@@ -59,6 +59,24 @@
       hnr.updateTag = 'KORRIGIERT';
     }
 
+    const lha = holdings.find(h => h.id === 'LHA');
+    if (lha) {
+      lha.next = '03.11.2026 · 3. Zwischenbericht Januar–September 2026';
+      lha.advice = 'Halten; Margenerholung vor Zukauf abwarten.';
+      lha.adviceWhy = 'Q2 zeigte einen deutlichen Ergebnisrückgang und der Jahresausblick wurde auf 1,7–2,2 Mrd. EUR bereinigtes EBIT eingegrenzt. Hohe Treibstoffkosten und Störungen belasten; der langfristige Margenpfad bleibt bestehen, ist kurzfristig aber mit hoher Unsicherheit behaftet.';
+      lha.thesis = 'Zyklischer Turnaround-Case mit wertvollen Cargo-/MRO-Aktivitäten, aber hoher Kosten- und Ausführungsabhängigkeit. Q2 2026 bestätigte die Belastung durch Treibstoff und Störungen; der auf 1,7–2,2 Mrd. EUR eingegrenzte EBIT-Ausblick reduziert die kurzfristige Visibilität.';
+      const q2News = {date:'2026-08-04',sourceName:'Lufthansa / Reuters',category:'Q2/H1-Ergebnis / Guidance',title:'Q2-Ergebnis fällt deutlich; Jahresausblick auf 1,7–2,2 Mrd. EUR EBIT eingegrenzt',summary:'Lufthansa erzielte im Q2 383 Mio. EUR bereinigtes EBIT nach 871 Mio. EUR im Vorjahr. Der Konzern erwartet für 2026 nun 1,7–2,2 Mrd. EUR bereinigtes EBIT. Hohe Treibstoffkosten und Störungen bleiben die wesentlichen Belastungsfaktoren.',impactText:'Negativ; Stärke 3. Der deutliche Ergebnisrückgang und die vorsichtigere Jahresbandbreite verschlechtern die kurzfristige Ergebnisvisibilität.',impact:-3,source:'https://www.reuters.com/business/lufthansa-sets-2026-profit-outlook-range-after-q2-ebit-hit-by-fuel-costs-2026-08-04/'};
+      lha.news = [q2News].concat((lha.news || []).filter(n => !(n.date === q2News.date && n.title === q2News.title)));
+      const q3Trigger = {date:'2026-11-03',title:'3. Zwischenbericht Januar–September 2026',background:'Nächster regulärer Finanzbericht. Im Fokus stehen Fuel-Kosten, Yield, Kapazität, operative Zuverlässigkeit, Free Cashflow und Einhaltung der EBIT-Bandbreite von 1,7–2,2 Mrd. EUR.',direction:'neutral',criteria:[1,1,0],source:'https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html',sourceName:'Lufthansa IR',status:'bestätigt'};
+      lha.triggers = [q3Trigger].concat((lha.triggers || []).filter(t => !(t.date === q3Trigger.date && t.title === q3Trigger.title)));
+      lha.risks = ['Hohe Treibstoffkosten und geopolitische Störungen belasten die Ergebnisvisibilität; trotz Hedging wurde die EBIT-Erwartung 2026 auf 1,7–2,2 Mrd. EUR eingegrenzt.', ...(lha.risks || []).filter(v => !v.startsWith('Jet-Fuel-Preise und geopolitische Störungen'))];
+      lha.lastCheckedAt = CONTENT_UPDATED_AT;
+      lha.lastChangedAt = CONTENT_UPDATED_AT;
+      lha.changedSections = ['Termin/Trigger','News','Investment-Einordnung','Rückenwind/Risiken'];
+      lha.updateStatus = 'corrected';
+      lha.updateTag = 'KORRIGIERT';
+    }
+
     const alv = holdings.find(h => h.id === 'ALV');
     if (alv) {
       const keys = new Set(allianzTrades.map(i => `${i.date}|${i.name}`));
@@ -92,7 +110,7 @@
       card.classList.toggle('content-changed', changed);
       card.classList.toggle('content-partial', false);
       if (h?.lastCheckedAt && CHECKED_IDS.has(h.id)) {
-        card.title = `Letzte Inhaltsprüfung: ${formatStamp(h.lastCheckedAt)}${changed ? ' · Geändert: Insider' : ' · Keine inhaltliche Änderung'}`;
+        card.title = `Letzte Inhaltsprüfung: ${formatStamp(h.lastCheckedAt)}${changed ? ` · Geändert: ${h.changedSections.join(', ')}` : ' · Keine inhaltliche Änderung'}`;
       }
     });
   }
@@ -101,11 +119,25 @@
     document.querySelectorAll('.update-badge').forEach(el => el.remove());
     const h = holdings.find(x => x.id === selected);
     if (!h || !CHANGED_IDS.has(h.id)) return;
-    const rows = document.querySelectorAll('#tab-research .research-grid > .box:nth-child(2) tbody tr');
-    rows.forEach(row => {
-      const firstCell = row.querySelector('td');
-      if (firstCell && !firstCell.querySelector('.update-badge')) firstCell.insertAdjacentHTML('afterbegin', `${badge('KORRIGIERT')} `);
-    });
+    if (h.changedSections?.includes('Investment-Einordnung')) {
+      const thesis = document.querySelector('#tab-overview .thesis');
+      if (thesis) thesis.insertAdjacentHTML('afterbegin', `${badge('KORRIGIERT')} `);
+    }
+    if (h.changedSections?.includes('Termin/Trigger')) {
+      const firstTrigger = document.querySelector('#tab-events .trigger');
+      if (firstTrigger) firstTrigger.insertAdjacentHTML('afterbegin', badge('KORRIGIERT'));
+    }
+    if (h.changedSections?.includes('News')) {
+      const firstNews = document.querySelector('#tab-events .news-item');
+      if (firstNews) firstNews.insertAdjacentHTML('afterbegin', badge('KORRIGIERT'));
+    }
+    if (h.changedSections?.includes('Insider')) {
+      const rows = document.querySelectorAll('#tab-research .research-grid > .box:nth-child(2) tbody tr');
+      rows.forEach(row => {
+        const firstCell = row.querySelector('td');
+        if (firstCell && !firstCell.querySelector('.update-badge')) firstCell.insertAdjacentHTML('afterbegin', `${badge('KORRIGIERT')} `);
+      });
+    }
   }
 
   function installWrappers() {
