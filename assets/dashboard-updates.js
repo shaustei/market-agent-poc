@@ -1,9 +1,10 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-07T17:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-07T17:00:00+02:00';
+  const CONTENT_UPDATED_AT = '2026-08-10T17:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-10T17:00:00+02:00';
   const EU_UPDATE_AT = '2026-08-07T10:00:00+02:00';
-  const US_UPDATE_AT = '2026-08-07T17:00:00+02:00';
-  const RUN_STATUS = 'ok';
+  const US_UPDATE_AT = '2026-08-10T17:00:00+02:00';
+  const PREVIOUS_US_UPDATE_AT = '2026-08-07T17:00:00+02:00';
+  const RUN_STATUS = 'partial';
   const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);
 
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
@@ -18,7 +19,7 @@
     text.textContent = `Inhalte: ${formatStamp(CONTENT_UPDATED_AT)}`;
     chip.classList.remove('status-ok','status-partial','status-error','status-closed');
     chip.classList.add(RUN_STATUS === 'ok' ? 'status-ok' : RUN_STATUS === 'partial' ? 'status-partial' : RUN_STATUS === 'closed' ? 'status-closed' : 'status-error');
-    chip.title = 'Letzter erfolgreich veröffentlichter Inhaltsstand';
+    chip.title = RUN_STATUS === 'partial' ? 'Inhaltsstand veröffentlicht; Holdings-Datei war für den Abgleich nicht verfügbar' : 'Letzter erfolgreich veröffentlichter Inhaltsstand';
   }
 
   function upsertByDate(items, entry) {
@@ -83,6 +84,22 @@
       cat.risks = ['Der zweistellige Kurssprung nach Q2 erhöht die Fallhöhe; weitere Kursgewinne setzen anhaltende Gewinnrevisionen und hohe Backlog-Umsetzung voraus.', ...(cat.risks || []).filter(v => !v.startsWith('Die anspruchsvolle Bewertung'))];
     }
 
+    const jbl = holdings.find(h => h.id === 'JBL');
+    if (jbl) {
+      const schick = {
+        date:'2026-07-15', name:'Gary K. Schick (SVP, CHRO)', type:'Verkauf · Rule 10b5-1',
+        shares:1000, price:319.86, volume:319856.73,
+        context:'Open-Market-Verkauf in mehreren Ausführungen; ausdrücklich gemäß Rule-10b5-1-Plan vom 21.03.2026. Wegen des vorab festgelegten Plans nur geringe negative Signalstärke.',
+        source:'https://www.sec.gov/Archives/edgar/data/898293/000122520826006639/xslF345X03/doc4.xml'
+      };
+      jbl.insiders = [schick].concat((jbl.insiders || []).filter(i => !(i.date === schick.date && i.name.includes('Gary K. Schick'))));
+      jbl.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 10.08.2026 17:00 CEST. Gary K. Schicks Verkauf vom 15.07.2026 erfolgte ausdrücklich gemäß Rule-10b5-1-Plan und wird deshalb nicht wie ein discretionary Open-Market-Verkauf gewertet. Bestehende valide Einträge bleiben erhalten.';
+      jbl.lastChangedAt = US_UPDATE_AT;
+      jbl.changedSections = ['Insider'];
+      jbl.updateStatus = 'updated';
+      jbl.updateTag = 'KORRIGIERT';
+    }
+
     const mcd = holdings.find(h => h.id === 'MCD');
     if (mcd) {
       mcd.next = 'Q3 2026 · Termin noch unbestätigt';
@@ -105,7 +122,7 @@
       const btig = {house:'BTIG', date:'2026-07-24', rating:'Buy', target:350, reason:'Kursziel von 370 auf 350 USD gesenkt; Buy bestätigt. Value-Angebote, Produktinnovation und operative Effizienz stützen den langfristigen Case.', quality:'Historische Güte: n. v.', source:'https://www.marketbeat.com/instant-alerts/mcdonalds-nysemcd-price-target-lowered-to-35000-at-btig-research-2026-07-24/'};
       mcd.analysts = [ubs,btig].concat((mcd.analysts || []).filter(a => !((a.house === 'UBS' && (a.date === '2026-07-27' || a.date === '2026-08-03')) || (a.house === 'BTIG' && a.date === '2026-07-24'))));
       mcd.risks = ['US-Comparable-Sales von nur 0,8 % und rückläufige Besuche einkommensschwächerer Kunden zeigen kurzfristig begrenzte Preissetzung und schwache Value-Ausführung.', ...(mcd.risks || []).filter(v => !v.startsWith('Preissensible und einkommensschwächere Kunden'))];
-      mcd.lastChangedAt = US_UPDATE_AT;
+      mcd.lastChangedAt = PREVIOUS_US_UPDATE_AT;
       mcd.changedSections = ['Analysten'];
       mcd.updateStatus = 'updated';
       mcd.updateTag = 'KORRIGIERT';
@@ -121,7 +138,7 @@
         source:'https://www.reuters.com/business/aerospace-defense/rheinmetall-ceo-expects-atacms-revenues-2028-boxer-deal-by-year-end-2026-08-07/'
       });
       lmt.tailwinds = ['Die geplante ATACMS-Fertigung mit Rheinmetall würde zusätzliche europäische Produktionskapazität für stark nachgefragte Raketen schaffen; finale Genehmigung steht noch aus.', ...(lmt.tailwinds || []).filter(v => !v.startsWith('Die geplante ATACMS-Fertigung'))];
-      lmt.lastChangedAt = US_UPDATE_AT;
+      lmt.lastChangedAt = PREVIOUS_US_UPDATE_AT;
       lmt.changedSections = ['News','Rückenwind/Risiken'];
       lmt.updateStatus = 'updated';
       lmt.updateTag = 'AKTUALISIERT';
@@ -173,6 +190,11 @@
     if (h.changedSections?.includes('Analysten')) {
       const firstAnalyst = document.querySelector('#tab-research tbody tr');
       if (firstAnalyst && !firstAnalyst.querySelector('.update-badge')) firstAnalyst.insertAdjacentHTML('afterbegin', badge(h.updateTag));
+    }
+    if (h.changedSections?.includes('Insider')) {
+      const insiderRows = document.querySelectorAll('#tab-research .box:nth-child(2) tbody tr');
+      const firstInsider = insiderRows?.[0];
+      if (firstInsider && !firstInsider.querySelector('.update-badge')) firstInsider.insertAdjacentHTML('afterbegin', badge(h.updateTag));
     }
   }
 
