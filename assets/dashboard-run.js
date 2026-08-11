@@ -1,9 +1,9 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-10T10:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-07T17:00:00+02:00';
+  const CONTENT_UPDATED_AT = '2026-08-11T10:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-11T10:00:00+02:00';
   const RUN_STATUS = 'partial';
   const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
-  const CHANGED_IDS = new Set(['HNR1','LHA','ALV']);
+  const HISTORICAL_CORRECTION_AT = '2026-08-10T10:00:00+02:00';
 
   window.marketAgentUpdateMeta = {
     contentUpdatedAt: CONTENT_UPDATED_AT,
@@ -44,19 +44,16 @@
     text.textContent = `Inhalte: ${formatStamp(CONTENT_UPDATED_AT)}`;
     chip.classList.remove('status-ok','status-partial','status-error','status-closed');
     chip.classList.add('status-partial');
-    chip.title = 'Teilaktualisierung: neueste Holdings-Datei war nicht abrufbar; Bestand gegen den bestätigten 9er-Sollbestand sowie Dashboard-IDs und Marktdatensymbole abgeglichen.';
+    chip.title = 'Teilaktualisierung: Holdings.md bzw. eine neuere Holdings-Datei war im Repository nicht verfügbar; der bestätigte 9er-Sollbestand wurde gegen Dashboard-IDs, Daten-JSONs und Marktdatensymbole geprüft.';
   }
 
-  function applyResearchCorrections() {
+  function applyHistoricalCorrections() {
     const hnr = holdings.find(h => h.id === 'HNR1');
     if (hnr) {
       hnr.insiders = [hannoverTrade].concat((hnr.insiders || []).filter(i => !(i.date === hannoverTrade.date && i.name === hannoverTrade.name)));
-      hnr.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 10.08.2026 10:00 CEST. Verifiziert ist der Open-Market-Kauf von Vorstand Clemens Jungsthöfel am 12.05.2026 über 1.000 Aktien zu 234,00 EUR auf Xetra. EQS/Directors’ Dealings wurde zusätzlich auf weitere relevante Meldungen geprüft.';
-      hnr.lastCheckedAt = CONTENT_UPDATED_AT;
-      hnr.lastChangedAt = CONTENT_UPDATED_AT;
-      hnr.changedSections = ['Insider'];
-      hnr.updateStatus = 'corrected';
-      hnr.updateTag = 'KORRIGIERT';
+      hnr.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 10:00 CEST. Verifiziert ist der Open-Market-Kauf von Vorstand Clemens Jungsthöfel am 12.05.2026 über 1.000 Aktien zu 234,00 EUR auf Xetra. EQS/Directors’ Dealings wurde zusätzlich auf neuere relevante Meldungen geprüft; bis zum Prüfzeitpunkt wurde keine weitere verifizierte Transaktion gefunden.';
+      hnr.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 10:00 CEST. FinanzNachrichten/dpa-AFX, MarketScreener und frei zugängliche Analyseübersichten wurden erneut geprüft; keine neuere belastbare Einzelanalyse mit Rating und Kursziel als die vorhandenen Einträge verifiziert. Öffentliche belastbare Trefferquoten einzelner Analysten waren nicht verfügbar.';
+      hnr.lastChangedAt = HISTORICAL_CORRECTION_AT;
     }
 
     const lha = holdings.find(h => h.id === 'LHA');
@@ -70,27 +67,28 @@
       const q3Trigger = {date:'2026-11-03',title:'3. Zwischenbericht Januar–September 2026',background:'Nächster regulärer Finanzbericht. Im Fokus stehen Fuel-Kosten, Yield, Kapazität, operative Zuverlässigkeit, Free Cashflow und Einhaltung der EBIT-Bandbreite von 1,7–2,2 Mrd. EUR.',direction:'neutral',criteria:[1,1,0],source:'https://investor-relations.lufthansagroup.com/en/events/financial-calendar.html',sourceName:'Lufthansa IR',status:'bestätigt'};
       lha.triggers = [q3Trigger].concat((lha.triggers || []).filter(t => !(t.date === q3Trigger.date && t.title === q3Trigger.title)));
       lha.risks = ['Hohe Treibstoffkosten und geopolitische Störungen belasten die Ergebnisvisibilität; trotz Hedging wurde die EBIT-Erwartung 2026 auf 1,7–2,2 Mrd. EUR eingegrenzt.', ...(lha.risks || []).filter(v => !v.startsWith('Jet-Fuel-Preise und geopolitische Störungen'))];
-      lha.lastCheckedAt = CONTENT_UPDATED_AT;
-      lha.lastChangedAt = CONTENT_UPDATED_AT;
-      lha.changedSections = ['Termin/Trigger','News','Investment-Einordnung','Rückenwind/Risiken'];
-      lha.updateStatus = 'corrected';
-      lha.updateTag = 'KORRIGIERT';
+      lha.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 10:00 CEST. FinanzNachrichten/dpa-AFX, MarketScreener, Yahoo Finance, Onvista und die IR-Abdeckung wurden erneut geprüft; keine neuere belastbare Einzelanalyse mit Rating und Kursziel als die vorhandenen Einträge verifiziert.';
+      lha.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 10:00 CEST. Lufthansa IR/Directors’ Dealings und weitere Pflichtmeldungsquellen wurden erneut geprüft; keine neue verifizierte meldepflichtige Open-Market-Transaktion gefunden.';
+      lha.lastChangedAt = HISTORICAL_CORRECTION_AT;
     }
 
     const alv = holdings.find(h => h.id === 'ALV');
     if (alv) {
       const keys = new Set(allianzTrades.map(i => `${i.date}|${i.name}`));
       alv.insiders = allianzTrades.concat((alv.insiders || []).filter(i => !keys.has(`${i.date}|${i.name}`)));
-      alv.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 10.08.2026 10:00 CEST. Am 11.05.2026 wurden neun Vorstands-Eigeninvestments gemäß Vorstandsdienstvertrag verifiziert. Sie fanden außerhalb eines Handelsplatzes statt und werden deshalb nicht als discretionary Open-Market-Kaufsignal gewertet.';
-      alv.lastCheckedAt = CONTENT_UPDATED_AT;
-      alv.lastChangedAt = CONTENT_UPDATED_AT;
-      alv.changedSections = ['Insider'];
-      alv.updateStatus = 'corrected';
-      alv.updateTag = 'KORRIGIERT';
+      alv.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 10:00 CEST. FinanzNachrichten/dpa-AFX, MarketScreener und frei zugängliche Analyseübersichten wurden nach Q2 erneut geprüft; bis zum Prüfzeitpunkt wurde keine neue belastbare Einzelanalyse mit Rating und Kursziel nach dem 07.08. verifiziert. Bestehende valide Einträge bleiben erhalten.';
+      alv.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 10:00 CEST. Die offizielle Allianz-Directors’-Dealings-Seite und EQS wurden erneut geprüft. Die neun Vorstands-Eigeninvestments vom 11.05.2026 erfolgten gemäß Vorstandsdienstvertrag außerhalb eines Handelsplatzes und werden nicht als discretionary Open-Market-Kaufsignal gewertet; keine neuere verifizierte relevante Transaktion gefunden.';
+      alv.lastChangedAt = HISTORICAL_CORRECTION_AT;
+    }
+
+    const etf = holdings.find(h => h.id === 'EUNL');
+    if (etf) {
+      etf.analystNote = 'Nicht anwendbar: Ein ETF hat keine unternehmensspezifischen Sell-Side-Kursziele. Relevanter sind Indexbewertung, Gewinnrevisionen, Tracking Difference, Kosten und Allokation.';
+      etf.insiderNote = 'Nicht anwendbar: Ein ETF hat keine Unternehmensinsider.';
     }
 
     holdings.forEach(h => {
-      if (!CHECKED_IDS.has(h.id) || CHANGED_IDS.has(h.id)) return;
+      if (!CHECKED_IDS.has(h.id)) return;
       h.lastCheckedAt = CONTENT_UPDATED_AT;
       h.changedSections = [];
       h.updateStatus = 'checked';
@@ -98,46 +96,23 @@
     });
   }
 
-  function badge(label) {
-    const cls = label === 'KORRIGIERT' ? 'update-corrected' : label === 'AKTUALISIERT' ? 'update-updated' : 'update-new';
-    return `<span class="update-badge ${cls}">${label}</span>`;
-  }
-
   function markCardsCurrentRun() {
     document.querySelectorAll('.holding').forEach(card => {
       const h = holdings.find(x => x.id === card.dataset.id);
-      const changed = Boolean(h && CHANGED_IDS.has(h.id));
-      card.classList.toggle('content-changed', changed);
-      card.classList.toggle('content-partial', false);
+      card.classList.remove('content-changed','content-partial');
       if (h?.lastCheckedAt && CHECKED_IDS.has(h.id)) {
-        card.title = `Letzte Inhaltsprüfung: ${formatStamp(h.lastCheckedAt)}${changed ? ` · Geändert: ${h.changedSections.join(', ')}` : ' · Keine inhaltliche Änderung'}`;
+        card.title = `Letzte Inhaltsprüfung: ${formatStamp(h.lastCheckedAt)} · Keine inhaltliche Änderung`;
       }
     });
   }
 
   function markDetailCurrentRun() {
     document.querySelectorAll('.update-badge').forEach(el => el.remove());
-    const h = holdings.find(x => x.id === selected);
-    if (!h || !CHANGED_IDS.has(h.id)) return;
-    if (h.changedSections?.includes('Investment-Einordnung')) {
-      const thesis = document.querySelector('#tab-overview .thesis');
-      if (thesis) thesis.insertAdjacentHTML('afterbegin', `${badge('KORRIGIERT')} `);
-    }
-    if (h.changedSections?.includes('Termin/Trigger')) {
-      const firstTrigger = document.querySelector('#tab-events .trigger');
-      if (firstTrigger) firstTrigger.insertAdjacentHTML('afterbegin', badge('KORRIGIERT'));
-    }
-    if (h.changedSections?.includes('News')) {
-      const firstNews = document.querySelector('#tab-events .news-item');
-      if (firstNews) firstNews.insertAdjacentHTML('afterbegin', badge('KORRIGIERT'));
-    }
-    if (h.changedSections?.includes('Insider')) {
-      const rows = document.querySelectorAll('#tab-research .research-grid > .box:nth-child(2) tbody tr');
-      rows.forEach(row => {
-        const firstCell = row.querySelector('td');
-        if (firstCell && !firstCell.querySelector('.update-badge')) firstCell.insertAdjacentHTML('afterbegin', `${badge('KORRIGIERT')} `);
-      });
-    }
+  }
+
+  function setFooterStamp() {
+    const footer = document.querySelector('footer.shell');
+    if (footer) footer.textContent = 'Market Agent · Datenstand 11.08.2026 · 10:00 · Quellen in jedem Eintrag';
   }
 
   function installWrappers() {
@@ -148,9 +123,11 @@
   }
 
   async function boot() {
-    setContentChip();
     for (let i = 0; i < 80 && (!Array.isArray(holdings) || holdings.length === 0); i++) await new Promise(r => setTimeout(r, 50));
-    applyResearchCorrections();
+    await new Promise(r => setTimeout(r, 150));
+    setContentChip();
+    setFooterStamp();
+    applyHistoricalCorrections();
     installWrappers();
     renderCards();
     renderDetail();
