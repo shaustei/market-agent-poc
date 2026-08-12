@@ -1,8 +1,8 @@
 (() => {
-  const CONTENT_UPDATED_AT = '2026-08-11T17:00:00+02:00';
-  const LAST_SUCCESSFUL_RUN_AT = '2026-08-11T17:00:00+02:00';
-  const CHECKED_IDS = new Set(['CAT','JBL','LMT','MCD','AMZN']);
-  const FOUR_MONTH_CUTOFF = '2026-04-11';
+  const CONTENT_UPDATED_AT = '2026-08-12T10:00:00+02:00';
+  const LAST_SUCCESSFUL_RUN_AT = '2026-08-12T10:00:00+02:00';
+  const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
+  const FOUR_MONTH_CUTOFF = '2026-04-12';
 
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
     timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric',
@@ -26,30 +26,25 @@
       delete h.updateTag;
     });
 
-    const cat = holdings.find(h => h.id === 'CAT');
-    if (cat) {
-      cat.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. Caterpillar IR/SEC sowie MarketBeat und weitere frei zugängliche Analystenquellen wurden erneut geprüft; keine neue belastbare Einzelanalyse oder relevante neue Form-4-Open-Market-Transaktion gegenüber dem vorhandenen Stand verifiziert.';
-      cat.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. SEC/Form 4 und ergänzende Insiderübersichten wurden erneut geprüft; keine neue relevante Transaktion gegenüber dem vorhandenen Bestand verifiziert.';
+    const hnr = holdings.find(h => h.id === 'HNR1');
+    if (hnr) {
+      hnr.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 12.08.2026 10:00 CEST. Hannover-Re-IR, dpa-AFX/FinanzNachrichten, MarketScreener und weitere frei zugängliche Analysequellen wurden geprüft. Neu berücksichtigt ist JPMorgan vom 28.07.2026 (Neutral, 270 EUR, Negative Catalyst Watch vor H1). Nach Veröffentlichung der Halbjahreszahlen war bis zum Prüfzeitpunkt keine belastbare neue Post-Result-Analyse mit Rating und Kursziel verifiziert.';
+      hnr.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 12.08.2026 10:00 CEST. Verifiziert bleibt der Open-Market-Kauf von CEO Clemens Jungsthöfel am 12.05.2026 über 1.000 Aktien zu 234,00 EUR auf Xetra. EQS/Directors’ Dealings wurde auf neuere relevante Meldungen geprüft; keine weitere verifizierte Transaktion gefunden.';
     }
-    const jbl = holdings.find(h => h.id === 'JBL');
-    if (jbl) {
-      jbl.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. Jabil IR/SEC und MarketBeat wurden erneut geprüft; keine neue belastbare Einzelanalyse gegenüber dem vorhandenen Stand verifiziert.';
-      jbl.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. SEC/Form 4 wurde erneut geprüft. Gary K. Schicks Verkauf vom 15.07.2026 erfolgte ausdrücklich gemäß Rule-10b5-1-Plan; keine neue relevante Transaktion gegenüber dem vorhandenen Bestand verifiziert.';
+    const lha = holdings.find(h => h.id === 'LHA');
+    if (lha) {
+      lha.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 12.08.2026 10:00 CEST. Lufthansa IR, FinanzNachrichten/dpa-AFX, MarketScreener, Yahoo Finance und Onvista wurden erneut geprüft; keine neue belastbare Einzelanalyse mit Rating und Kursziel gegenüber dem vorhandenen Stand verifiziert.';
+      lha.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 12.08.2026 10:00 CEST. Lufthansa IR/Directors’ Dealings und Pflichtmeldungsquellen wurden erneut geprüft; keine neue verifizierte meldepflichtige Open-Market-Transaktion gefunden.';
     }
-    const lmt = holdings.find(h => h.id === 'LMT');
-    if (lmt) {
-      lmt.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. Lockheed-Martin-IR/SEC und MarketBeat wurden erneut geprüft; keine neue belastbare Einzelanalyse gegenüber den vorhandenen Post-Q2-Revisionen verifiziert.';
-      lmt.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. Die offiziellen SEC-Filings wurden erneut geprüft; keine neue relevante Open-Market-Transaktion verifiziert. Vergütungs-/Deferred-Compensation-Vorgänge bleiben ohne Handelssignal.';
+    const alv = holdings.find(h => h.id === 'ALV');
+    if (alv) {
+      alv.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 12.08.2026 10:00 CEST. Allianz IR, FinanzNachrichten/dpa-AFX, MarketScreener, Yahoo Finance und Onvista wurden nach Q2 erneut geprüft; keine neue belastbare Einzelanalyse mit Rating und Kursziel gegenüber dem vorhandenen Stand verifiziert.';
+      alv.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 12.08.2026 10:00 CEST. Allianz Directors’ Dealings/EQS erneut geprüft. Die neun Vorstands-Eigeninvestments vom 11.05.2026 bleiben als vertragliche Eigeninvestments außerhalb eines Handelsplatzes klassifiziert; keine neuere verifizierte relevante Transaktion gefunden.';
     }
-    const mcd = holdings.find(h => h.id === 'MCD');
-    if (mcd) {
-      mcd.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. McDonald’s IR/SEC und MarketBeat wurden erneut geprüft; keine neue belastbare Einzelanalyse gegenüber den vorhandenen Juli-Revisionen verifiziert.';
-      mcd.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. SEC/Form 4 wurde erneut geprüft; keine neue relevante Open-Market-Transaktion verifiziert. Einträge vor dem 11.04.2026 wurden gemäß Vier-Monats-Regel entfernt.';
-    }
-    const amzn = holdings.find(h => h.id === 'AMZN');
-    if (amzn) {
-      amzn.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. Amazon IR/SEC, MarketBeat und ergänzende frei zugängliche Analystenquellen wurden erneut geprüft; keine neue belastbare Einzelanalyse gegenüber dem vorhandenen Post-Q2-Bestand verifiziert.';
-      amzn.insiderNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 11.08.2026 17:00 CEST. SEC-Form-4/144-Prüfung berücksichtigt planmäßige Verkäufe separat; keine neue discretionary Open-Market-Transaktion gegenüber dem vorhandenen Stand verifiziert.';
+    const etf = holdings.find(h => h.id === 'EUNL');
+    if (etf) {
+      etf.analystNote = 'Nicht anwendbar: Ein ETF hat keine unternehmensspezifischen Sell-Side-Kursziele. Relevant sind Indexbewertung, Gewinnrevisionen, Tracking Difference, Kosten und Allokation.';
+      etf.insiderNote = 'Nicht anwendbar: Ein ETF hat keine Unternehmensinsider.';
     }
   }
 
@@ -69,7 +64,7 @@
       if (h?.lastCheckedAt && CHECKED_IDS.has(h.id)) card.title = `Letzte Inhaltsprüfung: ${formatStamp(h.lastCheckedAt)} · Keine inhaltliche Änderung`;
     });
     const footer = document.querySelector('footer.shell');
-    if (footer) footer.textContent = 'Market Agent · Datenstand 11.08.2026 · 17:00 · Quellen in jedem Eintrag';
+    if (footer) footer.textContent = 'Market Agent · Datenstand 12.08.2026 · 10:00 · Quellen in jedem Eintrag';
   }
 
   async function boot() {
@@ -88,6 +83,6 @@
     const chip = document.getElementById('content-state-chip');
     const text = document.getElementById('content-state');
     if (chip) { chip.classList.remove('status-ok','status-partial','status-closed'); chip.classList.add('status-error'); }
-    if (text) text.textContent = 'Inhalte: letzter erfolgreicher Stand 11.08.2026 · 10:00 · Aktualisierung fehlgeschlagen';
+    if (text) text.textContent = 'Inhalte: letzter erfolgreicher Stand 11.08.2026 · 17:00 · Aktualisierung fehlgeschlagen';
   });
 })();
