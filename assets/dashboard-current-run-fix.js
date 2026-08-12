@@ -1,8 +1,8 @@
 (() => {
-  const STAMP = '2026-08-12T10:00:00+02:00';
-  const CHANGED_IDS = new Set(['HNR1']);
+  const STAMP = '2026-08-12T17:00:00+02:00';
+  const CHANGED_IDS = new Set(['JBL']);
 
-  function applyChanges() {
+  function applyPersistentHannoverUpdate() {
     const hnr = holdings.find(h => h.id === 'HNR1');
     if (!hnr) return;
 
@@ -48,38 +48,64 @@
       'Reserveverstärkungen in älteren Schadenjahren wären ein Warnsignal für die bisher hohe Ergebnisqualität.',
       'Währungseffekte belasteten H1; weitere starke Wechselkursbewegungen können ausgewiesene Ergebnisse und Umsatz verzerren.'
     ];
-
-    hnr.changedSections = ['Termin/Trigger','News','Analysten','Investment-Einordnung','Rückenwind/Risiken'];
-    hnr.updateStatus = 'updated';
-    hnr.updateTag = 'AKTUALISIERT';
-    hnr.lastChangedAt = STAMP;
   }
 
-  function addBadge(selector, label='AKTUALISIERT') {
-    const el = document.querySelector(selector);
-    if (el && !el.querySelector('.update-badge')) el.insertAdjacentHTML('beforeend', ` <span class="update-badge update-updated">${label}</span>`);
+  function applyJabilUpdate() {
+    const jbl = holdings.find(h => h.id === 'JBL');
+    if (!jbl) return;
+
+    const analyst = {
+      house:'UBS', date:'2026-08-12', rating:'Buy', target:430,
+      reason:'David Vogt stuft Jabil von Neutral auf Buy hoch; Kursziel unverändert 430 USD. UBS erwartet einen mehrjährigen AI-Infrastrukturzyklus und rund 20,3 Mrd. USD AI-bezogenen Umsatz im FY2027 nach rund 13,5 Mrd. USD im FY2026, getragen unter anderem von Hyperscaler-Investitionen.',
+      quality:'Analyst: David Vogt · historische Güte: n. v.',
+      source:'https://www.barrons.com/articles/jabil-stock-buy-ai-amazon-658cd2cb'
+    };
+    jbl.analysts = [analyst].concat((jbl.analysts || []).filter(a => !(a.house === analyst.house && a.date === analyst.date)));
+
+    const news = {
+      date:'2026-08-12', sourceName:'UBS / Barron’s', category:'Analystenrevision',
+      title:'UBS stuft Jabil auf Buy hoch; AI-Umsatz soll 2027 deutlich steigen',
+      summary:'UBS hob Jabil von Neutral auf Buy an und beließ das Kursziel bei 430 USD. Analyst David Vogt erwartet für FY2027 rund 20,3 Mrd. USD AI-bezogenen Umsatz nach etwa 13,5 Mrd. USD im FY2026; als Treiber gelten Hyperscaler-Investitionen und Jabils Rolle bei Servern, Netzwerk- und Kühlungsinfrastruktur.',
+      impactText:'Positiv; Stärke 2. Das Upgrade bestätigt den strukturellen AI-Nachfragecase und erhöht die Visibilität für den Umsatzmix, ohne wegen des unveränderten Kursziels eine fundamentale Neubewertung zu rechtfertigen.',
+      impact:2,
+      source:'https://www.barrons.com/articles/jabil-stock-buy-ai-amazon-658cd2cb'
+    };
+    jbl.news = [news].concat((jbl.news || []).filter(n => !(n.date === news.date && n.title === news.title)));
+
+    jbl.changedSections = ['News','Analysten'];
+    jbl.updateStatus = 'updated';
+    jbl.updateTag = 'NEU';
+    jbl.lastChangedAt = STAMP;
+  }
+
+  function badgeInto(el, label) {
+    if (el && !el.querySelector('.update-badge')) el.insertAdjacentHTML('beforeend', ` <span class="update-badge update-new">${label}</span>`);
   }
 
   function markChanges() {
     document.querySelectorAll('.holding').forEach(card => {
       if (CHANGED_IDS.has(card.dataset.id)) {
         card.classList.add('content-changed');
-        card.title = 'Heute inhaltlich aktualisiert · Hannover Re H1 2026';
+        card.title = 'Heute inhaltlich aktualisiert · Jabil Analysten/News';
       }
     });
     document.querySelectorAll('.update-badge').forEach(el => el.remove());
-    if (selected !== 'HNR1') return;
-    addBadge('#tab-overview .box:nth-child(1) h3');
-    addBadge('#tab-overview .box:nth-child(2) h3');
-    addBadge('#tab-overview .box:nth-child(3) h3');
-    addBadge('#tab-events .box:nth-child(1) h3');
-    addBadge('#tab-events .box:nth-child(2) h3');
-    addBadge('#tab-research .box:nth-child(1) h3');
+    if (selected !== 'JBL') return;
+
+    document.querySelectorAll('#tab-events .news-item').forEach(item => {
+      const title = item.querySelector('h4');
+      if (title?.textContent?.includes('UBS stuft Jabil auf Buy hoch')) badgeInto(title, 'NEU');
+    });
+    document.querySelectorAll('#tab-research tbody tr').forEach(row => {
+      const text = row.textContent || '';
+      if (text.includes('UBS') && text.includes('12.08.2026')) badgeInto(row.querySelector('td:first-child'), 'NEU');
+    });
   }
 
   async function boot() {
     await new Promise(resolve => setTimeout(resolve, 500));
-    applyChanges();
+    applyPersistentHannoverUpdate();
+    applyJabilUpdate();
     const priorCards = renderCards;
     renderCards = function(){ priorCards(); markChanges(); };
     const priorDetail = renderDetail;
