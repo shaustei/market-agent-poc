@@ -77,6 +77,14 @@
     renderCards();
     renderDetail();
     markCurrentRun();
+
+    setTimeout(() => {
+      const latestCards = renderCards;
+      renderCards = function(){ latestCards(); markCurrentRun(); };
+      const latestDetail = renderDetail;
+      renderDetail = function(){ latestDetail(); markCurrentRun(); };
+      markCurrentRun();
+    }, 700);
   }
 
   boot().catch(() => {
