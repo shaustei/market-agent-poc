@@ -2,10 +2,9 @@
   const STAMP = '2026-08-25T10:00:00+02:00';
   const FOUR_MONTH_CUTOFF = '2026-04-25';
   const CHECKED_IDS = new Set(['HNR1','EUNL','LHA','ALV']);
-  const CHANGED_IDS = new Set(['HNR1','LHA']);
+  const CHANGED_IDS = new Set(['LHA']);
 
   const upsert = (list, item, key) => [item].concat((list || []).filter(x => key(x) !== key(item)));
-  const analystKey = a => `${a.house}|${a.date}|${a.rating}|${a.target ?? ''}`;
   const newsKey = n => `${n.date}|${n.title}`;
   const formatStamp = value => new Intl.DateTimeFormat('de-DE', {
     timeZone:'Europe/Berlin', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'
@@ -30,22 +29,8 @@
 
     const hnr = holdings.find(h => h.id === 'HNR1');
     if (hnr) {
-      const alphaValue = {
-        house:'AlphaValue',
-        date:'2026-08-24',
-        rating:'n. v.',
-        target:null,
-        reason:'Neue öffentlich gelistete Research-Note „1H26 Reinsurance review: Good numbers, outlook still challenging“. Rating, Kursziel und Analyst sind im frei zugänglichen Teil nicht veröffentlicht und werden daher nicht ergänzt.',
-        quality:'Analyst: n. v. · historische Güte: n. v.',
-        source:'https://www.marketscreener.com/news/1h26-reinsurance-review-good-numbers-outlook-still-challenging-ce7858dbdc89f725'
-      };
-      hnr.analysts = upsert(hnr.analysts, alphaValue, analystKey);
-      hnr.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 25.08.2026 10:00 CEST. Hannover-Re-IR, FinanzNachrichten/dpa-AFX, MarketScreener und frei zugängliche Analyseübersichten wurden geprüft. Neu aufgenommen wurde die AlphaValue-Research-Note vom 24.08.; Rating, Kursziel und Analyst sind öffentlich nicht verifizierbar und daher n. v.';
+      hnr.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 25.08.2026 10:00 CEST. Hannover-Re-IR, FinanzNachrichten/dpa-AFX, MarketScreener und frei zugängliche Analyseübersichten wurden geprüft. Eine am 24.08. veröffentlichte AlphaValue-Branchenresearch-Note ist öffentlich gelistet; ein Hannover-Re-spezifisches Rating, Kursziel oder ein Analyst ist im frei zugänglichen Teil nicht verifizierbar und wurde daher nicht als Einzelanalyse aufgenommen.';
       hnr.insiderNote = 'Rollierendes Vier-Monats-Fenster ab 25.04.2026 geprüft. Der verifizierte Open-Market-Kauf von Vorstand Clemens Jungsthöfel am 12.05.2026 bleibt gültig; keine neuere relevante Directors’-Dealings-Transaktion verifiziert.';
-      hnr.changedSections = ['Analysten'];
-      hnr.updateStatus = 'updated';
-      hnr.updateTag = 'NEU';
-      hnr.lastChangedAt = STAMP;
     }
 
     const lha = holdings.find(h => h.id === 'LHA');
@@ -58,7 +43,7 @@
         summary:'Kuehne+Nagel meldete am 24.08. den Tod von Klaus-Michael Kühne im Alter von 89 Jahren. Die Lufthansa-IR weist Kühne Aviation GmbH zum 01.07.2026 weiterhin mit 20,00 % der Stimmrechte aus. Eine Veränderung oder Veräußerung dieser Beteiligung ist damit nicht belegt; relevant ist künftig die Nachfolge- und Eigentümerstruktur des Ankeraktionärs.',
         impactText:'Aktuell neutral; Stärke 1. Es liegt keine bestätigte Stimmrechtsänderung oder Transaktion vor. Wegen der 20-%-Beteiligung ist die künftige Eigentümer- und Nachfolgestruktur dennoch beobachtungsrelevant.',
         impact:0,
-        source:'https://newsroom.kuehne-nagel.com/klaus-michael-kuehne-passed-away/'
+        source:'https://newsroom.kuehne-nagel.com/kuehnenagel-mourns-the-loss-of-klaus-michael-kuehne/'
       };
       lha.news = upsert(lha.news, shareholderNews, newsKey);
       lha.analystNote = 'Rollierendes Vier-Monats-Fenster, geprüft bis 25.08.2026 10:00 CEST. Lufthansa IR, FinanzNachrichten/dpa-AFX, MarketScreener, Yahoo Finance und Onvista wurden geprüft; keine neuere verifizierbare Einzelanalyse nach Barclays vom 19.08. übernommen.';
@@ -108,13 +93,6 @@
       }
     });
 
-    if (selected === 'HNR1') {
-      document.querySelectorAll('#tab-research tbody tr').forEach(row => {
-        if ((row.textContent || '').includes('24.08.2026') && (row.textContent || '').includes('AlphaValue')) {
-          badgeInto(row.querySelector('td:first-child'), 'NEU');
-        }
-      });
-    }
     if (selected === 'LHA') {
       document.querySelectorAll('#tab-events .news-item').forEach(item => {
         if ((item.textContent || '').includes('Klaus-Michael Kühne')) badgeInto(item.querySelector('.news-meta'), 'NEU');
