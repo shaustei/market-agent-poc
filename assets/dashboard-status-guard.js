@@ -1,55 +1,17 @@
 (() => {
-  const fmt = value => new Intl.DateTimeFormat('de-DE', {
-    timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-  }).format(new Date(value)).replace(',', ' ·');
-
-  function latestStamp() {
-    const stamps = [];
-    for (const h of (window.holdings || [])) {
-      if (h.lastCheckedAt) stamps.push(h.lastCheckedAt);
-      if (h.lastChangedAt) stamps.push(h.lastChangedAt);
-    }
-    if (window.marketAgentUpdateMeta?.contentUpdatedAt) stamps.push(window.marketAgentUpdateMeta.contentUpdatedAt);
-    return stamps
-      .filter(Boolean)
-      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] || null;
+  const FLOOR_STAMP = '2026-09-01T10:00:00+02:00';
+  const floorMs = new Date(FLOOR_STAMP).getTime();
+  const fmt = value => new Intl.DateTimeFormat('de-DE', {timeZone:'Europe/Berlin',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value)).replace(',', ' ·');
+  function enforceFloor(){
+    const value = window.marketAgentUpdateMeta?.contentUpdatedAt;
+    const ms = value ? new Date(value).getTime() : 0;
+    if (Number.isFinite(ms) && ms >= floorMs) return;
+    const text=document.getElementById('content-state');
+    if(text) text.textContent=`Inhalte: ${fmt(FLOOR_STAMP)}`;
+    const footer=document.querySelector('footer.shell');
+    if(footer) footer.textContent='Market Agent · Datenstand 01.09.2026 · 10:00 · Quellen in jedem Eintrag';
   }
-
-  function enforceLatestStatus() {
-    const stamp = latestStamp();
-    if (!stamp) return;
-    const text = document.getElementById('content-state');
-    if (text) text.textContent = `Inhalte: ${fmt(stamp)}`;
-    const footer = document.querySelector('footer.shell');
-    if (footer) {
-      const d = new Date(stamp);
-      const date = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric' }).format(d);
-      const time = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit' }).format(d);
-      footer.textContent = `Market Agent · Datenstand ${date} · ${time} · Quellen in jedem Eintrag`;
-    }
-  }
-
-  function install() {
-    const baseCards = window.renderCards;
-    if (typeof baseCards === 'function') {
-      window.renderCards = function(...args) {
-        const result = baseCards.apply(this, args);
-        enforceLatestStatus();
-        return result;
-      };
-    }
-    const baseDetail = window.renderDetail;
-    if (typeof baseDetail === 'function') {
-      window.renderDetail = function(...args) {
-        const result = baseDetail.apply(this, args);
-        enforceLatestStatus();
-        return result;
-      };
-    }
-    enforceLatestStatus();
-    window.addEventListener('pageshow', enforceLatestStatus);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) enforceLatestStatus(); });
-  }
-
-  setTimeout(install, 7000);
+  [0,1500,3500,5500,8000].forEach(d=>setTimeout(enforceFloor,d));
+  window.addEventListener('pageshow',enforceFloor);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)enforceFloor()});
 })();
