@@ -1,24 +1,49 @@
 (() => {
   const IDS = ['HNR1','EUNL','CAT','JBL','LMT','LHA','MCD','ALV','AMZN','MEDP','NTAP','RNG'];
+  const RAW_BASE = 'https://raw.githubusercontent.com/shaustei/market-agent-poc/main/data/';
   let running = false;
+  let recoveredOnce = false;
 
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+  async function fetchJson(url) {
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) throw new Error(`HTTP ${r.status} ${url}`);
+    return r.json();
+  }
+
   async function readHolding(id) {
     let lastError;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        const r = await fetch('/data/' + id + '.json', { cache: 'no-store' });
-        if (!r.ok) throw new Error(`${id}: HTTP ${r.status}`);
-        const data = await r.json();
-        if (!data || data.id !== id) throw new Error(`${id}: invalid payload`);
-        return data;
-      } catch (err) {
-        lastError = err;
-        await sleep(250 * (attempt + 1));
+    const urls = [
+      `/data/${id}.json?v=20260904-1700`,
+      `${RAW_BASE}${id}.json?ref=20260904-1700`
+    ];
+    for (const url of urls) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const data = await fetchJson(url);
+          if (!data || data.id !== id) throw new Error(`${id}: invalid payload`);
+          return data;
+        } catch (err) {
+          lastError = err;
+          await sleep(180 * (attempt + 1));
+        }
       }
     }
     throw lastError || new Error(`${id}: load failed`);
+  }
+
+  function replayCurrentOverlays() {
+    if (recoveredOnce) return;
+    recoveredOnce = true;
+    ['/assets/dashboard-eu-20260904.js','/assets/dashboard-us-20260904.js'].forEach((src, i) => {
+      setTimeout(() => {
+        const s = document.createElement('script');
+        s.src = `${src}?recovery=20260905-1541`;
+        s.async = false;
+        document.body.appendChild(s);
+      }, 150 + i * 180);
+    });
   }
 
   async function recover() {
@@ -45,15 +70,17 @@
       renderCards();
       renderDetail();
       await load();
+      replayCurrentOverlays();
     } catch (err) {
       const state = document.getElementById('data-state');
-      if (state) state.textContent = 'Dashboard-Daten konnten nicht geladen werden';
+      if (state) state.textContent = `Dashboard-Daten konnten nicht geladen werden${err && err.message ? ': ' + err.message : ''}`;
     } finally {
       running = false;
     }
   }
 
-  setTimeout(recover, 300);
-  setTimeout(recover, 2500);
+  setTimeout(recover, 250);
+  setTimeout(recover, 1800);
+  setTimeout(recover, 5000);
   window.addEventListener('pageshow', () => setTimeout(recover, 200));
 })();
