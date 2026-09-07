@@ -15,8 +15,8 @@
   async function readHolding(id) {
     let lastError;
     const urls = [
-      `/data/${id}.json?v=20260907-1000`,
-      `${RAW_BASE}${id}.json?ref=20260907-1000`
+      `/data/${id}.json?v=20260907-1410`,
+      `${RAW_BASE}${id}.json?ref=20260907-1410`
     ];
     for (const url of urls) {
       for (let attempt = 0; attempt < 2; attempt++) {
@@ -39,21 +39,33 @@
     ['/assets/dashboard-us-20260904.js','/assets/dashboard-eu-20260907.js'].forEach((src, i) => {
       setTimeout(() => {
         const s = document.createElement('script');
-        s.src = `${src}?recovery=20260907-1250`;
+        s.src = `${src}?recovery=20260907-1410`;
         s.async = false;
         document.body.appendChild(s);
       }, 150 + i * 220);
     });
   }
 
+  async function waitForRuntime() {
+    for (let i = 0; i < 40; i++) {
+      if (typeof window.renderCards === 'function' && typeof window.renderDetail === 'function' && typeof window.load === 'function') return true;
+      await sleep(100);
+    }
+    return false;
+  }
+
   async function recover() {
     if (running) return;
     const root = document.getElementById('holdings');
-    const alreadyHealthy = Array.isArray(holdings) && holdings.length === IDS.length && root && root.children.length === IDS.length;
+    const currentHoldings = Array.isArray(window.holdings) ? window.holdings : [];
+    const alreadyHealthy = currentHoldings.length === IDS.length && root && root.children.length === IDS.length;
     if (alreadyHealthy) return;
 
     running = true;
     try {
+      const runtimeReady = await waitForRuntime();
+      if (!runtimeReady) throw new Error('Dashboard-Runtime nicht verfügbar');
+
       const settled = await Promise.allSettled(IDS.map(readHolding));
       const failed = settled.map((r, i) => r.status === 'rejected' ? IDS[i] : null).filter(Boolean);
       if (failed.length) {
@@ -62,13 +74,14 @@
         return;
       }
 
-      holdings = settled.map(r => r.value);
+      window.holdings = settled.map(r => r.value);
+      if (!IDS.includes(window.selected)) window.selected = window.holdings[0].id;
       const all = document.querySelector('[data-filter="ALL"]');
-      if (all) all.textContent = `Alle ${holdings.length}`;
+      if (all) all.textContent = `Alle ${window.holdings.length}`;
 
-      renderCards();
-      renderDetail();
-      await load();
+      window.renderCards();
+      window.renderDetail();
+      await window.load();
       replayCurrentOverlays();
     } catch (err) {
       const state = document.getElementById('data-state');
