@@ -15,8 +15,8 @@
   async function readHolding(id) {
     let lastError;
     const urls = [
-      `/data/${id}.json?v=20260904-1700`,
-      `${RAW_BASE}${id}.json?ref=20260904-1700`
+      `/data/${id}.json?v=20260907-1000`,
+      `${RAW_BASE}${id}.json?ref=20260907-1000`
     ];
     for (const url of urls) {
       for (let attempt = 0; attempt < 2; attempt++) {
@@ -36,13 +36,13 @@
   function replayCurrentOverlays() {
     if (recoveredOnce) return;
     recoveredOnce = true;
-    ['/assets/dashboard-eu-20260904.js','/assets/dashboard-us-20260904.js'].forEach((src, i) => {
+    ['/assets/dashboard-us-20260904.js','/assets/dashboard-eu-20260907.js'].forEach((src, i) => {
       setTimeout(() => {
         const s = document.createElement('script');
-        s.src = `${src}?recovery=20260905-1541`;
+        s.src = `${src}?recovery=20260907-1250`;
         s.async = false;
         document.body.appendChild(s);
-      }, 150 + i * 180);
+      }, 150 + i * 220);
     });
   }
 
@@ -65,7 +65,6 @@
       holdings = settled.map(r => r.value);
       const all = document.querySelector('[data-filter="ALL"]');
       if (all) all.textContent = `Alle ${holdings.length}`;
-      if (!IDS.includes(selected)) selected = holdings[0].id;
 
       renderCards();
       renderDetail();
