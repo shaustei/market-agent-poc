@@ -1,12 +1,12 @@
 (() => {
-  const FLOOR_STAMP = '2026-09-01T10:00:00+02:00';
+  const FLOOR_STAMP = '2026-09-10T10:00:00+02:00';
   const floorMs = new Date(FLOOR_STAMP).getTime();
   const fmt = value => new Intl.DateTimeFormat('de-DE', {
     timeZone:'Europe/Berlin', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'
   }).format(new Date(value)).replace(',', ' ·');
 
   function latestSuccessfulStamp() {
-    const stamps = [];
+    const stamps = [FLOOR_STAMP];
     if (window.marketAgentUpdateMeta?.contentUpdatedAt) stamps.push(window.marketAgentUpdateMeta.contentUpdatedAt);
     if (window.marketAgentUpdateMeta?.lastSuccessfulRunAt) stamps.push(window.marketAgentUpdateMeta.lastSuccessfulRunAt);
     if (typeof holdings !== 'undefined' && Array.isArray(holdings)) {
@@ -52,9 +52,7 @@
     }
   }
 
-  // Apply immediately, then after bootstrap milestones. Older overlay scripts may still
-  // execute later; the observer below prevents them from regressing the visible timestamp.
-  [0,100,300,700,1500,3000].forEach(delay => setTimeout(enforceLatestStatus, delay));
+  [0,50,150,300,700,1500,3000,5000,10000,15000,22000].forEach(delay => setTimeout(enforceLatestStatus, delay));
 
   const startObserver = () => {
     const text = document.getElementById('content-state');
