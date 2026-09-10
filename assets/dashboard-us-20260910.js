@@ -48,10 +48,10 @@
 
     const lmt=holdings.find(h=>h.id==='LMT');
     if(lmt){
-      addAnalyst(lmt,{house:'UBS',analyst:'Gavin Parsons',date:'2026-09-09',rating:'Buy',target:674,reason:'Von Hold auf Buy hochgestuft; Kursziel von 581 auf 674 USD angehoben. Begründung: starkes Wachstum im Missile-Geschäft und attraktivere Bewertung trotz begrenzter F-35-Wachstumsfantasie.',quality:'Historische Güte: n. v.',source:'https://www.barrons.com/articles/lockheed-l3harris-stock-military-midterm-elections-e5ed876c'});
-      lmt.analystNote='Rollierendes Vier-Monats-Fenster ab 10.05.2026, geprüft bis 10.09.2026 17:00 CEST. UBS/Gavin Parsons vom 09.09. ergänzt: Upgrade Hold → Buy, Kursziel 581 → 674 USD; weitere relevante Quellen geprüft.';
+      addAnalyst(lmt,{house:'UBS',analyst:'Gavin Parsons',date:'2026-09-08',rating:'Buy',target:674,reason:'Von Neutral auf Buy hochgestuft; Kursziel von 581 auf 674 USD angehoben. Begründung: starkes Wachstum im Missile-/Munitionsgeschäft, zusätzliche Beiträge aus F-35-Sustainment, CH-53K und Trident sowie eine attraktivere Bewertung.',quality:'Historische Güte: n. v.',source:'https://www.tipranks.com/news/the-fly/lockheed-martin-upgraded-to-buy-from-neutral-at-ubs-thefly-news'});
+      lmt.analystNote='Rollierendes Vier-Monats-Fenster ab 10.05.2026, geprüft bis 10.09.2026 17:00 CEST. UBS/Gavin Parsons vom 08.09. ergänzt: Upgrade Neutral → Buy, Kursziel 581 → 674 USD; zusätzliche Quellen bestätigen die Revision.';
       lmt.insiderNote='SEC Form 4 und ergänzende Insiderquellen im Vier-Monats-Fenster ab 10.05.2026 geprüft; keine neue belastbar verifizierte relevante Transaktion seit dem vorherigen US-Lauf übernommen.';
-      lmt.lastChangedAt=STAMP;lmt.changedSections=['Analysten'];lmt.updateStatus='updated';lmt.updateTag='NEU';
+      lmt.lastChangedAt=STAMP;lmt.changedSections=['Analysten'];lmt.updateStatus='updated';lmt.updateTag='KORRIGIERT';
     }
 
     const mcd=holdings.find(h=>h.id==='MCD');
@@ -102,7 +102,7 @@
     document.querySelectorAll('.update-badge').forEach(el=>el.remove());
     document.querySelectorAll('.holding').forEach(card=>{card.classList.remove('content-changed','content-partial');const h=holdings.find(x=>x.id===card.dataset.id);if(CHANGED_IDS.has(card.dataset.id)){card.classList.add('content-changed');card.title=`Heute inhaltlich aktualisiert · ${(h?.changedSections||[]).join(', ')}`;}else if(h&&CHECKED_IDS.has(h.id)){card.title=`Letzte Inhaltsprüfung: ${fmtStamp(STAMP)} · Keine inhaltliche Änderung`;}});
     if(selected==='JBL') document.querySelectorAll('#tab-events .trigger').forEach(el=>{if(/Q4- und FY2026/.test(el.textContent||''))addBadge(el.querySelector('.item-top'),'NEU');});
-    if(selected==='LMT') document.querySelectorAll('#tab-research tbody tr').forEach(el=>{if(/UBS/.test(el.textContent||''))addBadge(el.querySelector('td'),'NEU');});
+    if(selected==='LMT') document.querySelectorAll('#tab-research tbody tr').forEach(el=>{if(/UBS/.test(el.textContent||''))addBadge(el.querySelector('td'),'KORRIGIERT');});
     if(selected==='MEDP') document.querySelectorAll('#tab-research tbody tr').forEach(el=>{if(/Troendle|Kraft/.test(el.textContent||''))addBadge(el.querySelector('td'),'NEU');});
     if(selected==='NTAP') document.querySelectorAll('#tab-research tbody tr').forEach(el=>{if(/Susquehanna/.test(el.textContent||''))addBadge(el.querySelector('td'),'NEU');});
     if(selected==='RNG') document.querySelectorAll('#tab-events .trigger').forEach(el=>{if(/Goldman Sachs Communacopia/.test(el.textContent||''))addBadge(el.querySelector('.item-top'),'NEU');});
