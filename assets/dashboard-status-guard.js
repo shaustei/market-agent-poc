@@ -1,5 +1,5 @@
 (() => {
-  const FLOOR_STAMP = '2026-09-10T10:00:00+02:00';
+  const FLOOR_STAMP = '2026-09-14T10:00:00+02:00';
   const floorMs = new Date(FLOOR_STAMP).getTime();
   const fmt = value => new Intl.DateTimeFormat('de-DE', {
     timeZone:'Europe/Berlin', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'
@@ -36,8 +36,8 @@
       if (chip) {
         chip.classList.remove('status-error','status-closed');
         const status = window.marketAgentUpdateMeta?.status;
-        chip.classList.toggle('status-ok', status === 'ok');
-        chip.classList.toggle('status-partial', status !== 'ok');
+        chip.classList.toggle('status-ok', status === 'ok' || !status);
+        chip.classList.toggle('status-partial', Boolean(status && status !== 'ok'));
       }
       const footer = document.querySelector('footer.shell');
       if (footer) {
