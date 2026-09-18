@@ -2,9 +2,26 @@
   const FLOOR_STAMP='2026-09-18T17:00:00+02:00';
   const floorMs=new Date(FLOOR_STAMP).getTime();
   const fmt=value=>new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value)).replace(',',' ·');
-  function latestSuccessfulStamp(){const stamps=[FLOOR_STAMP];if(window.marketAgentUpdateMeta?.contentUpdatedAt)stamps.push(window.marketAgentUpdateMeta.contentUpdatedAt);if(window.marketAgentUpdateMeta?.lastSuccessfulRunAt)stamps.push(window.marketAgentUpdateMeta.lastSuccessfulRunAt);if(typeof holdings!=='undefined'&&Array.isArray(holdings))holdings.forEach(h=>{if(h?.lastCheckedAt)stamps.push(h.lastCheckedAt);if(h?.lastChangedAt)stamps.push(h.lastChangedAt)});const valid=stamps.map(value=>({value,ms:new Date(value).getTime()})).filter(x=>Number.isFinite(x.ms)&&x.ms>=floorMs).sort((a,b)=>b.ms-a.ms);return valid[0]?.value||FLOOR_STAMP}
-  let enforcing=false;
-  function enforce(){if(enforcing)return;enforcing=true;try{const stamp=latestSuccessfulStamp(),formatted=fmt(stamp),text=document.getElementById('content-state'),chip=document.getElementById('content-state-chip');if(text)text.textContent=`Inhalte: ${formatted}`;if(chip){chip.classList.remove('status-error','status-closed','status-ok');chip.classList.add('status-partial')}const footer=document.querySelector('footer.shell');if(footer){const d=new Date(stamp),date=new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',day:'2-digit',month:'2-digit',year:'numeric'}).format(d),time=new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',hour:'2-digit',minute:'2-digit'}).format(d);footer.textContent=`Market Agent · Datenstand ${date} · ${time} · Quellen in jedem Eintrag`}}finally{enforcing=false}}
-  [0,50,150,300,700,1500,3000,5000,10000,15000,22000].forEach(delay=>setTimeout(enforce,delay));
-  const start=()=>{const observer=new MutationObserver(()=>queueMicrotask(enforce)),text=document.getElementById('content-state'),footer=document.querySelector('footer.shell');if(text)observer.observe(text,{childList:true,characterData:true,subtree:true});if(footer)observer.observe(footer,{childList:true,characterData:true,subtree:true})};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();window.addEventListener('pageshow',()=>setTimeout(enforce,0));document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(enforce,0)});document.addEventListener('click',e=>{if(e.target.closest('.holding,.tab,.filter'))setTimeout(enforce,0)});
+  function latestSuccessfulStamp(){
+    const stamps=[FLOOR_STAMP];
+    if(window.marketAgentUpdateMeta?.contentUpdatedAt)stamps.push(window.marketAgentUpdateMeta.contentUpdatedAt);
+    if(window.marketAgentUpdateMeta?.lastSuccessfulRunAt)stamps.push(window.marketAgentUpdateMeta.lastSuccessfulRunAt);
+    if(typeof holdings!=='undefined'&&Array.isArray(holdings))holdings.forEach(h=>{if(h?.lastCheckedAt)stamps.push(h.lastCheckedAt);if(h?.lastChangedAt)stamps.push(h.lastChangedAt)});
+    const valid=stamps.map(value=>({value,ms:new Date(value).getTime()})).filter(x=>Number.isFinite(x.ms)&&x.ms>=floorMs).sort((a,b)=>b.ms-a.ms);
+    return valid[0]?.value||FLOOR_STAMP;
+  }
+  function enforce(){
+    const stamp=latestSuccessfulStamp(),formatted=fmt(stamp),text=document.getElementById('content-state'),chip=document.getElementById('content-state-chip');
+    if(text&&text.textContent!==`Inhalte: ${formatted}`)text.textContent=`Inhalte: ${formatted}`;
+    if(chip){chip.classList.remove('status-error','status-closed','status-ok');chip.classList.add('status-partial')}
+    const footer=document.querySelector('footer.shell');
+    if(footer){
+      const d=new Date(stamp),date=new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',day:'2-digit',month:'2-digit',year:'numeric'}).format(d),time=new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',hour:'2-digit',minute:'2-digit'}).format(d);
+      const value=`Market Agent · Datenstand ${date} · ${time} · Quellen in jedem Eintrag`;
+      if(footer.textContent!==value)footer.textContent=value;
+    }
+  }
+  [0,100,500,1500,4000,8000,15000].forEach(delay=>setTimeout(enforce,delay));
+  window.addEventListener('pageshow',()=>setTimeout(enforce,0));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(enforce,0)});
 })();
