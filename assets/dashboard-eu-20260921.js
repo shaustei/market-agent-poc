@@ -1,0 +1,22 @@
+(() => {
+  const STAMP='2026-09-21T10:00:00+02:00', CUTOFF='2026-05-21';
+  const CHECKED=new Set(['HNR1','EUNL','LHA','ALV']), CHANGED=new Set(['HNR1','ALV']);
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  const upsert=(list,item,key)=>[item].concat((list||[]).filter(x=>key(x)!==key(item)));
+  const analystKey=a=>`${a.house}|${a.date}|${a.rating}|${a.target??''}`;
+  const fmt=v=>new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(v)).replace(',',' ·');
+  async function boot(){
+    for(let i=0;i<50;i++){if(Array.isArray(window.holdings)&&window.holdings.length===12&&typeof window.renderCards==='function')break;await sleep(100)}
+    if(!Array.isArray(window.holdings)||window.holdings.length!==12)return;
+    window.marketAgentUpdateMeta={contentUpdatedAt:STAMP,lastSuccessfulRunAt:STAMP,status:'partial',marketStatus:'EU open',holdingsFallback:true};
+    window.holdings.forEach(h=>{if(!CHECKED.has(h.id))return;h.analysts=(h.analysts||[]).filter(x=>!/^\d{4}-\d{2}-\d{2}$/.test(x.date)||x.date>=CUTOFF);h.insiders=(h.insiders||[]).filter(x=>!/^\d{4}-\d{2}-\d{2}$/.test(x.date)||x.date>=CUTOFF);h.lastCheckedAt=STAMP;h.changedSections=[];h.updateStatus='checked';delete h.updateTag});
+    const hnr=window.holdings.find(h=>h.id==='HNR1');if(hnr){hnr.analysts=upsert(hnr.analysts,{house:'DZ Bank',date:'2026-09-18',rating:'Kaufen',target:314,reason:'Thorsten Wenzel bestätigt Kaufen und fairen Wert 314 EUR. Bilanzielle Puffer und ein höheres Kapitalanlageergebnis ermöglichen nach seiner Einschätzung Gewinnwachstum; die historisch niedrige Bewertung wird als Einstiegsgelegenheit gesehen.',quality:'Analyst: Thorsten Wenzel · historische Güte: n. v.',source:'https://www.finanznachrichten.de/nachrichten-2026-09/69617377-dz-bank-stuft-hannover-rueckversicherung-ag-auf-kaufen-322.htm'},analystKey);hnr.next='22.09.2026 · Baader Investment Conference';hnr.changedSections=['Analysten','Trigger'];hnr.lastChangedAt=STAMP;hnr.updateStatus='changed';hnr.updateTag='NEU';hnr.analystNote='Rollierendes Vier-Monats-Fenster ab 21.05.2026, geprüft bis 21.09.2026 10:00 CEST. DZ Bank vom 18.09. ergänzt; weitere bestehende valide Einträge bleiben erhalten.';}
+    const etf=window.holdings.find(h=>h.id==='EUNL');if(etf){etf.analystNote='Nicht anwendbar: ETF. ISIN IE00B4L5Y983; Analysten- und Insiderfelder sind nicht anwendbar.';etf.insiderNote='Nicht anwendbar: Ein ETF hat keine Unternehmensinsider.';}
+    const lha=window.holdings.find(h=>h.id==='LHA');if(lha){lha.analystNote='Rollierendes Vier-Monats-Fenster ab 21.05.2026, geprüft bis 21.09.2026 10:00 CEST. Keine neue belastbar verifizierte Einzelrevision seit dem vorherigen EU-Lauf.';lha.insiderNote='Rollierendes Vier-Monats-Fenster ab 21.05.2026 geprüft; keine neue relevante diskretionäre Open-Market-Transaktion verifiziert.';}
+    const alv=window.holdings.find(h=>h.id==='ALV');if(alv){alv.analysts=upsert(alv.analysts,{house:'DZ Bank',date:'2026-09-18',rating:'Kaufen',target:495,reason:'Thorsten Wenzel hebt den fairen Wert von 486 auf 495 EUR an und bestätigt Kaufen. Begründung: attraktive Kombination aus hohen Ausschüttungen und Gewinnwachstum; Gewinnschätzungen nach dem guten Q2 angehoben.',quality:'Analyst: Thorsten Wenzel · historische Güte: n. v.',source:'https://www.finanznachrichten.de/nachrichten-2026-09/69618743-analyse-flash-dz-bank-hebt-fairen-wert-fuer-allianz-auf-495-euro-kaufen-016.htm'},analystKey);alv.changedSections=['Analysten'];alv.lastChangedAt=STAMP;alv.updateStatus='changed';alv.updateTag='NEU';alv.analystNote='Rollierendes Vier-Monats-Fenster ab 21.05.2026, geprüft bis 21.09.2026 10:00 CEST. DZ Bank vom 18.09. ergänzt; bestehende valide Einträge bleiben erhalten.';}
+    window.renderCards();window.renderDetail();
+    const t=document.getElementById('content-state'),c=document.getElementById('content-state-chip');if(t)t.textContent=`Inhalte: ${fmt(STAMP)}`;if(c){c.classList.remove('status-ok','status-error','status-closed');c.classList.add('status-partial');c.title='Holdings-Datei nicht erreichbar – letzter bestätigter Bestand verwendet.'}
+    const f=document.querySelector('footer.shell');if(f)f.textContent='Market Agent · Datenstand 21.09.2026 · 10:00 · Quellen in jedem Eintrag';
+  }
+  boot();
+})();
