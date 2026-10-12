@@ -1,1 +1,1 @@
-// 2026-10-12 US holdings update; pending verified content.
+// 2026-10-12 US research verified; publication pending.
