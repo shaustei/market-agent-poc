@@ -6,14 +6,14 @@
     const stamps=[FLOOR_STAMP];
     if(window.marketAgentUpdateMeta?.contentUpdatedAt)stamps.push(window.marketAgentUpdateMeta.contentUpdatedAt);
     if(window.marketAgentUpdateMeta?.lastSuccessfulRunAt)stamps.push(window.marketAgentUpdateMeta.lastSuccessfulRunAt);
-    if(typeof holdings!=='undefined'&&Array.isArray(holdings))holdings.forEach(h=>{if(h?.lastCheckedAt)stamps.push(h.lastCheckedAt);if(h?.lastChangedAt)stamps.push(h.lastChangedAt)});
+    // Per-holding checks do not prove a successfully published content run.
     const valid=stamps.map(value=>({value,ms:new Date(value).getTime()})).filter(x=>Number.isFinite(x.ms)&&x.ms>=floorMs).sort((a,b)=>b.ms-a.ms);
     return valid[0]?.value||FLOOR_STAMP;
   }
   function enforce(){
     const stamp=latestSuccessfulStamp(),formatted=fmt(stamp),text=document.getElementById('content-state'),chip=document.getElementById('content-state-chip');
     if(text&&text.textContent!==`Inhalte: ${formatted}`)text.textContent=`Inhalte: ${formatted}`;
-    if(chip){chip.classList.remove('status-error','status-closed','status-ok');chip.classList.add('status-partial')}
+    if(chip){const status=window.marketAgentUpdateMeta?.status;const cls=status==='ok'?'status-ok':status==='closed'?'status-closed':status==='error'?'status-error':'status-partial';chip.classList.remove('status-error','status-closed','status-ok','status-partial');chip.classList.add(cls)}
     const footer=document.querySelector('footer.shell');
     if(footer){
       const d=new Date(stamp),date=new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',day:'2-digit',month:'2-digit',year:'numeric'}).format(d),time=new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',hour:'2-digit',minute:'2-digit'}).format(d);
