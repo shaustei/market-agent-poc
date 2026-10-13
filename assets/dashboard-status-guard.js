@@ -1,5 +1,5 @@
 (() => {
-  const FLOOR_STAMP='2026-09-18T17:00:00+02:00';
+  const FLOOR_STAMP='2026-10-06T17:00:00+02:00';
   const floorMs=new Date(FLOOR_STAMP).getTime();
   const fmt=value=>new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value)).replace(',',' ·');
   function latestSuccessfulStamp(){
