@@ -1,10 +1,11 @@
 (() => {
   const fmt=value=>new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(value)).replace(',',' ·');
+  let latestObserved=null;
   function latestSuccessfulStamp(){
-    const meta=window.marketAgentUpdateMeta;
-    const stamp=meta?.lastSuccessfulRunAt;
-    if(!stamp||!Number.isFinite(new Date(stamp).getTime())||new Date(stamp).getTime()>Date.now()+60000)return null;
-    return stamp;
+    const stamp=window.marketAgentUpdateMeta?.lastSuccessfulRunAt;
+    const ms=stamp?new Date(stamp).getTime():NaN;
+    if(Number.isFinite(ms)&&ms<=Date.now()+60000&&(!latestObserved||ms>new Date(latestObserved).getTime()))latestObserved=stamp;
+    return latestObserved;
   }
   function enforce(){
     const stamp=latestSuccessfulStamp(),formatted=stamp?fmt(stamp):null,text=document.getElementById('content-state'),chip=document.getElementById('content-state-chip');
