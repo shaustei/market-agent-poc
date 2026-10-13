@@ -21,7 +21,8 @@
       if(footer.textContent!==value)footer.textContent=value;
     }
   }
-  [0,100,500,1500,4000,8000,15000].forEach(delay=>setTimeout(enforce,delay));
+  [0,100,500,1500,4000,8000,15000,21000,30000].forEach(delay=>setTimeout(enforce,delay));
   window.addEventListener('pageshow',()=>setTimeout(enforce,0));
+  document.addEventListener('click',e=>{if(e.target.closest('.holding,.tab,.filter'))setTimeout(enforce,100)});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(enforce,0)});
 })();
