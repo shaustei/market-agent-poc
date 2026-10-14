@@ -1,0 +1,35 @@
+name: Dashboard integrity
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Determine changed files
+        id: changes
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            git diff --name-only "origin/${{ github.base_ref }}" HEAD > /tmp/dashboard-changed.txt
+          elif git rev-parse HEAD^ >/dev/null 2>&1; then
+            git diff --name-only HEAD^ HEAD > /tmp/dashboard-changed.txt
+          else
+            git ls-files > /tmp/dashboard-changed.txt
+          fi
+          echo "DASHBOARD_CHANGED_FILES<<EOF" >> "$GITHUB_ENV"
+          cat /tmp/dashboard-changed.txt >> "$GITHUB_ENV"
+          echo "EOF" >> "$GITHUB_ENV"
+      - name: Validate dashboard release
+        run: node scripts/validate-dashboard.mjs
